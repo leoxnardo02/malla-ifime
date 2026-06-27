@@ -115,6 +115,13 @@
         .sidenav { height: 100%; width: 0; position: fixed; z-index: 2000; top: 0; right: 0; background: #fff; transition: 0.4s; box-shadow: -10px 0 40px rgba(0,0,0,0.2); overflow-x: hidden; }
         .sidenav-header { background: var(--unab-blue); padding: 30px; color: white; position: relative; }
         .sidenav-body { padding: 25px; }
+        
+        .lab-config { background: #f8f9fa; padding: 15px; border-radius: 8px; margin-bottom: 20px; border-left: 4px solid var(--unab-blue); }
+        .lab-config-label { font-size: 0.75rem; font-weight: 700; color: var(--text-main); text-transform: uppercase; margin-bottom: 8px; display: block; }
+        .lab-config-input { width: 100%; padding: 8px; border: 1px solid #cbd5e0; border-radius: 6px; font-size: 0.85rem; box-sizing: border-box; }
+        .lab-config-helper { font-size: 0.7rem; color: var(--text-muted); margin-top: 6px; }
+        
+        .calc-section-title { font-size: 0.75rem; font-weight: 700; color: var(--unab-blue); text-transform: uppercase; margin-top: 15px; margin-bottom: 10px; padding-bottom: 8px; border-bottom: 2px solid #e2e8f0; }
         .calc-row { display: grid; grid-template-columns: 1fr 1fr 40px; gap: 10px; margin-bottom: 10px; align-items: center; }
         .calc-input { padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 0.9rem; width: 100%; box-sizing: border-box;}
         .btn-add-nota { background: #e2e8f0; border: none; padding: 10px; border-radius: 6px; cursor: pointer; width: 100%; font-weight: bold; margin-bottom: 20px; }
@@ -163,11 +170,32 @@
         </div>
         <div class="sidenav-body">
             <div id="calculadoraContainer" style="display:none;">
-                <p style="font-size: 0.75rem; color: var(--text-muted); font-weight: bold; text-transform: uppercase;">Notas Parciales</p>
+                <div class="lab-config">
+                    <label class="lab-config-label">Porcentaje de Laboratorio</label>
+                    <input type="number" id="labPercentageInput" class="lab-config-input" min="0" max="100" step="1" placeholder="Ej: 30" oninput="onLabPercentageChange()">
+                    <div class="lab-config-helper" id="labConfigHelper">Las notas del ramo ocuparán el porcentaje restante</div>
+                </div>
+                
+                <div class="calc-section-title">Notas del Ramo</div>
                 <div id="notasInputs"></div>
-                <button class="btn-add-nota" onclick="addRow()"><i class="fas fa-plus"></i> Agregar Nota</button>
+                <button class="btn-add-nota" onclick="addRow()"><i class="fas fa-plus"></i> Agregar nota</button>
+                
+                <div class="calc-section-title">Notas de Laboratorio</div>
+                <div id="labNotasInputs"></div>
+                <button class="btn-add-nota" onclick="addLabRow()" style="margin-bottom: 20px;"><i class="fas fa-plus"></i> Agregar nota lab</button>
+                
                 <div class="result-box">
-                    <p style="margin:0; font-size:0.7rem; font-weight:bold; color:var(--text-muted)">PROMEDIO PONDERADO</p>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; text-align: center; margin-bottom: 12px;">
+                        <div>
+                            <p style="margin:0; font-size:0.7rem; font-weight:bold; color:var(--text-muted)">PROMEDIO RAMO</p>
+                            <h3 id="ramoCalcGrade" style="margin:0; color: var(--unab-blue); font-size: 1.3rem;">-</h3>
+                        </div>
+                        <div>
+                            <p style="margin:0; font-size:0.7rem; font-weight:bold; color:var(--text-muted)">PROMEDIO LAB</p>
+                            <h3 id="labCalcGrade" style="margin:0; color: var(--unab-blue); font-size: 1.3rem;">-</h3>
+                        </div>
+                    </div>
+                    <p style="margin:8px 0 0 0; font-size:0.7rem; font-weight:bold; color:var(--text-muted)">NOTA FINAL</p>
                     <h1 class="result-grade" id="finalCalcGrade"></h1>
                     <p id="weightAlert" style="font-size:0.65rem; margin-top:5px; color:var(--unab-red)"></p>
                 </div>
@@ -301,9 +329,18 @@
 
         function loadCalculator(id) {
             const container = document.getElementById("notasInputs");
+            const labContainer = document.getElementById("labNotasInputs");
             container.innerHTML = "";
+            labContainer.innerHTML = "";
+            
             let savedData = JSON.parse(localStorage.getItem('calc_' + id)) || [{n: "", p: ""}];
+            let savedLabData = JSON.parse(localStorage.getItem('calc_lab_' + id)) || [];
+            let labPercentage = localStorage.getItem('lab_percent_' + id) || "0";
+            
             savedData.forEach(row => addRow(row.n, row.p));
+            savedLabData.forEach(row => addLabRow(row.n, row.p));
+            document.getElementById("labPercentageInput").value = labPercentage;
+            updateLabConfigHelper(labPercentage);
             calculateWeighted();
         }
 
@@ -314,35 +351,126 @@
             document.getElementById("notasInputs").appendChild(div);
         }
 
+        function addLabRow(nota = "", peso = "") {
+            const div = document.createElement("div");
+            div.className = "calc-row";
+            div.innerHTML = `<input type="number" step="0.1" class="calc-input nota-lab" placeholder="Nota" value="${nota}" oninput="calculateWeighted()"><input type="number" step="1" class="calc-input peso-lab" placeholder="%" value="${peso}" oninput="calculateWeighted()"><button class="btn-remove" onclick="this.parentElement.remove(); calculateWeighted()"><i class="fas fa-trash"></i></button>`;
+            document.getElementById("labNotasInputs").appendChild(div);
+        }
+
         function calculateWeighted() {
-            const n = document.querySelectorAll(".nota"); const p = document.querySelectorAll(".peso");
-            let total = 0, weightSum = 0, count = 0;
-            n.forEach((val, i) => {
-                const v = parseFloat(val.value); const pe = parseFloat(p[i].value);
-                if(!isNaN(v) && !isNaN(pe)) { total += (v * (pe / 100)); weightSum += pe; count++; }
+            // Obtener datos del ramo
+            const notasRamo = document.querySelectorAll(".nota");
+            const pesosRamo = document.querySelectorAll(".peso");
+            const notasLab = document.querySelectorAll(".nota-lab");
+            const pesosLab = document.querySelectorAll(".peso-lab");
+            const labPercentage = parseFloat(document.getElementById("labPercentageInput").value) || 0;
+            const ramoPercentage = 100 - labPercentage;
+            
+            // Calcular promedio del ramo
+            let totalRamo = 0, weightSumRamo = 0, countRamo = 0;
+            notasRamo.forEach((val, i) => {
+                const v = parseFloat(val.value);
+                const pe = parseFloat(pesosRamo[i].value);
+                if(!isNaN(v) && !isNaN(pe)) {
+                    totalRamo += (v * (pe / 100));
+                    weightSumRamo += pe;
+                    countRamo++;
+                }
             });
-            const final = (count > 0 && weightSum > 0) ? total.toFixed(2) : "";
-            document.getElementById("finalCalcGrade").innerText = final;
-            const alert = document.getElementById("weightAlert");
-            if(weightSum < 100) alert.innerText = `Falta un ${100 - weightSum}%`;
-            else if(weightSum > 100) alert.innerText = `Exceso: ${weightSum}%`;
-            else alert.innerText = "100% OK";
-            return { grade: final, sum: weightSum };
+            const promRamo = (countRamo > 0 && weightSumRamo > 0) ? totalRamo : "";
+            document.getElementById("ramoCalcGrade").innerText = promRamo !== "" ? parseFloat(promRamo).toFixed(2) : "-";
+            
+            // Calcular promedio del lab
+            let totalLab = 0, weightSumLab = 0, countLab = 0;
+            notasLab.forEach((val, i) => {
+                const v = parseFloat(val.value);
+                const pe = parseFloat(pesosLab[i].value);
+                if(!isNaN(v) && !isNaN(pe)) {
+                    totalLab += (v * (pe / 100));
+                    weightSumLab += pe;
+                    countLab++;
+                }
+            });
+            const promLab = (countLab > 0 && weightSumLab > 0) ? totalLab : "";
+            document.getElementById("labCalcGrade").innerText = promLab !== "" ? parseFloat(promLab).toFixed(2) : "-";
+            
+            // Calcular nota final considerando porcentajes
+            let finalGrade = "";
+            if (promRamo !== "" && labPercentage > 0) {
+                if (promLab !== "") {
+                    finalGrade = ((promRamo * (ramoPercentage / 100)) + (promLab * (labPercentage / 100))).toFixed(2);
+                } else {
+                    finalGrade = "Falta promedio de Lab";
+                }
+            } else if (promRamo !== "" && labPercentage === 0) {
+                finalGrade = parseFloat(promRamo).toFixed(2);
+            }
+            
+            document.getElementById("finalCalcGrade").innerText = finalGrade;
+            
+            // Validar pesos
+            let alertMsg = "";
+            if (weightSumRamo > 0 && weightSumRamo !== 100) {
+                alertMsg += `Ramo: ${weightSumRamo < 100 ? `Falta ${100 - weightSumRamo}%` : `Exceso: ${weightSumRamo - 100}%`}`;
+            }
+            if (weightSumLab > 0 && weightSumLab !== 100) {
+                if (alertMsg) alertMsg += " | ";
+                alertMsg += `Lab: ${weightSumLab < 100 ? `Falta ${100 - weightSumLab}%` : `Exceso: ${weightSumLab - 100}%`}`;
+            }
+            document.getElementById("weightAlert").innerText = alertMsg || "✓ Pesos OK";
+            document.getElementById("weightAlert").style.color = alertMsg ? "var(--unab-red)" : "var(--state-passed)";
+            
+            return { grade: finalGrade, sumRamo: weightSumRamo, sumLab: weightSumLab };
+        }
+        
+        function onLabPercentageChange() {
+            updateLabConfigHelper(document.getElementById("labPercentageInput").value);
+            calculateWeighted();
+        }
+        
+        function updateLabConfigHelper(percentage) {
+            const per = parseFloat(percentage) || 0;
+            const ramo = 100 - per;
+            const helper = document.getElementById("labConfigHelper");
+            helper.innerText = per > 0 ? 
+                `Ramo: ${ramo}% | Lab: ${per}%` : 
+                "Las notas del ramo ocuparán el 100%";
         }
 
         function saveGrade() {
             const res = calculateWeighted();
-            const rows = document.querySelectorAll(".calc-row");
-            let dataToSave = [];
-            rows.forEach(row => { dataToSave.push({ n: row.querySelector(".nota").value, p: row.querySelector(".peso").value }); });
-            localStorage.setItem('calc_' + currentRamoId, JSON.stringify(dataToSave));
-            if(res.grade !== "") {
+            
+            // Guardar datos del ramo
+            const rowsRamo = document.querySelectorAll("#notasInputs .calc-row");
+            let dataRamoToSave = [];
+            rowsRamo.forEach(row => { 
+                dataRamoToSave.push({ n: row.querySelector(".nota").value, p: row.querySelector(".peso").value }); 
+            });
+            localStorage.setItem('calc_' + currentRamoId, JSON.stringify(dataRamoToSave));
+            
+            // Guardar datos del lab
+            const rowsLab = document.querySelectorAll("#labNotasInputs .calc-row");
+            let dataLabToSave = [];
+            rowsLab.forEach(row => { 
+                dataLabToSave.push({ n: row.querySelector(".nota-lab").value, p: row.querySelector(".peso-lab").value }); 
+            });
+            localStorage.setItem('calc_lab_' + currentRamoId, JSON.stringify(dataLabToSave));
+            
+            // Guardar porcentaje de lab
+            const labPercent = document.getElementById("labPercentageInput").value;
+            localStorage.setItem('lab_percent_' + currentRamoId, labPercent);
+            
+            // Guardar nota final
+            if(res.grade !== "" && res.grade !== "Falta promedio de Lab") {
                 localStorage.setItem('grade_' + currentRamoId, res.grade);
                 if(parseFloat(res.grade) >= 4.0 && !aprobadas.includes(currentRamoId)) {
                     aprobadas.push(currentRamoId);
                     localStorage.setItem('MALLA_UNAB_V3', JSON.stringify(aprobadas));
                 }
-            } else { localStorage.removeItem('grade_' + currentRamoId); }
+            } else { 
+                localStorage.removeItem('grade_' + currentRamoId); 
+            }
             render(); closeNav();
         }
 
