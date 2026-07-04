@@ -3,6 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
     <title>IFIME Dashboard | UNAB</title>
     <link rel="manifest" href="manifest.json">
     <link rel="apple-touch-icon" href="icon-512.png">
@@ -13,7 +16,7 @@
     <meta name="description" content="Malla Curricular IFIME - Universidad Abierta y a Distancia de Chile">
     <script>
         if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('sw.js');
+            navigator.serviceWorker.register('sw.js', { updateViaCache: 'none' });
         }
     </script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -1133,31 +1136,32 @@
         // =============================================
         let deferredPrompt;
         const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+        const isAndroid = /Android/.test(navigator.userAgent);
 
-        if (isIOS) {
-            document.getElementById('installContainer').style.display = 'block';
-            document.getElementById('btnInstall').addEventListener('click', () => {
-                showToast('En Safari: toca Compartir > Agregar a pantalla de inicio', 'info', 5000);
-            });
-        } else {
-            window.addEventListener('beforeinstallprompt', (e) => {
-                e.preventDefault();
-                deferredPrompt = e;
-                document.getElementById('installContainer').style.display = 'block';
-            });
+        document.getElementById('installContainer').style.display = 'block';
 
-            document.getElementById('btnInstall').addEventListener('click', async () => {
-                if (deferredPrompt) {
-                    deferredPrompt.prompt();
-                    const { outcome } = await deferredPrompt.userChoice;
-                    if (outcome === 'accepted') {
-                        document.getElementById('installContainer').style.display = 'none';
-                        showToast('App instalada', 'success');
-                    }
-                    deferredPrompt = null;
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+        });
+
+        document.getElementById('btnInstall').addEventListener('click', async () => {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                const { outcome } = await deferredPrompt.userChoice;
+                if (outcome === 'accepted') {
+                    document.getElementById('installContainer').style.display = 'none';
+                    showToast('App instalada', 'success');
                 }
-            });
-        }
+                deferredPrompt = null;
+            } else if (isIOS) {
+                showToast('En Safari: toca Compartir > Agregar a pantalla de inicio', 'info', 5000);
+            } else if (isAndroid) {
+                showToast('Chrome: toca los 3 puntos > Instalar app', 'info', 5000);
+            } else {
+                showToast('Chrome: toca los 3 puntos > Instalar app', 'info', 5000);
+            }
+        });
 
         // =============================================
         // SPLASH SCREEN
