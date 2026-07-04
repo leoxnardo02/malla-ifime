@@ -595,13 +595,13 @@
         // =============================================
         // TOAST
         // =============================================
-        function showToast(msg, type) {
+        function showToast(msg, type, duration) {
             const t = document.getElementById('toast');
             t.className = 'toast ' + (type || '');
             t.innerHTML = msg;
             t.classList.add('show');
             clearTimeout(t._timeout);
-            t._timeout = setTimeout(() => t.classList.remove('show'), 2200);
+            t._timeout = setTimeout(() => t.classList.remove('show'), duration || 2200);
         }
 
         // =============================================
@@ -627,49 +627,49 @@
             { id: "BIOL130", nombre: "Biología Celular", sem: 1, cred: 8, req: [], lab: 20 },
             { id: "QUIM102", nombre: "Química General", sem: 1, cred: 16, req: [], lab: 20 },
             { id: "TMED001", nombre: "Intro. a Tec. Médica", sem: 1, cred: 5, req: [], lab: 20 },
-            { id: "FMMP101", nombre: "Álgebra y Cálculo", sem: 1, cred: 14, req: [], lab: null },
+            { id: "FMMP101", nombre: "Álgebra y Cálculo", sem: 1, cred: 14, req: [], lab: 20 },
             { id: "MORF122", nombre: "Histoembriología", sem: 2, cred: 14, req: ["BIOL130", "MORFO10"], lab: 20 },
             { id: "CFIS020", nombre: "Física General", sem: 2, cred: 12, req: ["FMMP101"], lab: 20 },
             { id: "QUIM022", nombre: "Química Orgánica", sem: 2, cred: 15, req: ["QUIM102"], lab: 20 },
-            { id: "ING119", nombre: "Inglés I", sem: 2, cred: 12, req: [], lab: null },
-            { id: "CEGHC11", nombre: "Hab. Comunicativas", sem: 2, cred: 8, req: [], lab: null },
+            { id: "ING119", nombre: "Inglés I", sem: 2, cred: 12, req: [], lab: 20 },
+            { id: "CEGHC11", nombre: "Hab. Comunicativas", sem: 2, cred: 8, req: [], lab: 20 },
             { id: "BIOL272", nombre: "Fisiología Humana", sem: 3, cred: 11, req: ["MORF122"], lab: 20 },
             { id: "BIOL166", nombre: "Bioquímica", sem: 3, cred: 8, req: ["QUIM022"], lab: 20 },
-            { id: "TMED003", nombre: "Bioética", sem: 3, cred: 8, req: ["TMED001", "CEGHC11"], lab: null },
+            { id: "TMED003", nombre: "Bioética", sem: 3, cred: 8, req: ["TMED001", "CEGHC11"], lab: 20 },
             { id: "TMED004", nombre: "Infectología", sem: 3, cred: 8, req: ["BIOL130"], lab: 20 },
-            { id: "ING129", nombre: "Inglés II", sem: 3, cred: 12, req: ["ING119"], lab: null },
-            { id: "CEGCT12", nombre: "Razon. Científico", sem: 3, cred: 6, req: ["CEGHC11"], lab: null },
-            { id: "TMED005", nombre: "Fisiopatología", sem: 4, cred: 15, req: ["BIOL272"], lab: null },
+            { id: "ING129", nombre: "Inglés II", sem: 3, cred: 12, req: ["ING119"], lab: 20 },
+            { id: "CEGCT12", nombre: "Razon. Científico", sem: 3, cred: 6, req: ["CEGHC11"], lab: 20 },
+            { id: "TMED005", nombre: "Fisiopatología", sem: 4, cred: 15, req: ["BIOL272"], lab: 20 },
             { id: "FARM171", nombre: "Farmacología", sem: 4, cred: 5, req: ["BIOL166"], lab: 20 },
-            { id: "ING239", nombre: "Inglés III", sem: 4, cred: 12, req: ["ING129"], lab: null },
+            { id: "ING239", nombre: "Inglés III", sem: 4, cred: 12, req: ["ING129"], lab: 20 },
             { id: "TMED431", nombre: "Prot. Radiológica", sem: 4, cred: 6, req: ["CFIS020", "BIOL272", "BIOL166", "TMED003", "TMED004", "ING129", "CEGCT12"], lab: 20 },
             { id: "TMED432", nombre: "Radiodiagnóstico I", sem: 4, cred: 20, req: ["CFIS020", "BIOL272", "BIOL166", "TMED003", "TMED004", "ING129", "CEGCT12"], lab: 20 },
             { id: "TMED433", nombre: "Física Electromag.", sem: 4, cred: 10, req: ["CFIS020", "BIOL272", "BIOL166", "TMED003", "TMED004", "ING129", "CEGCT12"], lab: 20 },
-            { id: "TMED006", nombre: "Proc. TM y Bios.", sem: 5, cred: 6, req: ["FARM171"], lab: null },
-            { id: "SPAB110", nombre: "Salud Pública I", sem: 5, cred: 7, req: ["TMED005"], lab: null },
-            { id: "ING249", nombre: "Inglés IV", sem: 5, cred: 12, req: ["ING239"], lab: null },
+            { id: "TMED006", nombre: "Proc. TM y Bios.", sem: 5, cred: 6, req: ["FARM171"], lab: 20 },
+            { id: "SPAB110", nombre: "Salud Pública I", sem: 5, cred: 7, req: ["TMED005"], lab: 20 },
+            { id: "ING249", nombre: "Inglés IV", sem: 5, cred: 12, req: ["ING239"], lab: 20 },
             { id: "TMED531", nombre: "Física Moderna", sem: 5, cred: 7, req: ["TMED431", "TMED433"], lab: 20 },
             { id: "TMED532", nombre: "Radiodiagnóstico II", sem: 5, cred: 24, req: ["FARM171", "TMED432"], lab: 20 },
             { id: "TMED533", nombre: "Anat. Imagenológica", sem: 5, cred: 11, req: ["TMED432", "TMED005"], lab: 20 },
-            { id: "SPAB111", nombre: "Salud Pública II", sem: 6, cred: 10, req: ["SPAB110", "TMED006"], lab: null },
+            { id: "SPAB111", nombre: "Salud Pública II", sem: 6, cred: 10, req: ["SPAB110", "TMED006"], lab: 20 },
             { id: "TMED631", nombre: "Física Nuclear", sem: 6, cred: 13, req: ["TMED531"], lab: 20 },
             { id: "TMED632", nombre: "Tomog. Computada", sem: 6, cred: 19, req: ["TMED532", "TMED533"], lab: 20 },
             { id: "TMED633", nombre: "Sist. Informáticos", sem: 6, cred: 13, req: ["TMED532"], lab: 20 },
             { id: "TMED634", nombre: "Patol. Imagenológica", sem: 6, cred: 12, req: ["TMED532", "TMED533"], lab: 20 },
-            { id: "SPAB112", nombre: "Gestión en Salud", sem: 7, cred: 6, req: ["SPAB111", "TMED633"], lab: null },
-            { id: "TMED002", nombre: "Educación en Salud", sem: 7, cred: 4, req: ["SPAB111"], lab: null },
+            { id: "SPAB112", nombre: "Gestión en Salud", sem: 7, cred: 6, req: ["SPAB111", "TMED633"], lab: 20 },
+            { id: "TMED002", nombre: "Educación en Salud", sem: 7, cred: 4, req: ["SPAB111"], lab: 20 },
             { id: "TMED731", nombre: "Medicina Nuclear", sem: 7, cred: 17, req: ["TMED631"], lab: 20 },
             { id: "TMED732", nombre: "Intervencionismo", sem: 7, cred: 12, req: ["TMED634"], lab: 20 },
-            { id: "TMED733", nombre: "Integrador I", sem: 7, cred: 9, req: ["TMED632", "TMED633", "TMED634"], lab: null },
+            { id: "TMED733", nombre: "Integrador I", sem: 7, cred: 9, req: ["TMED632", "TMED633", "TMED634"], lab: 20 },
             { id: "TMED734", nombre: "Ultrasonido", sem: 7, cred: 17, req: ["TMED634"], lab: 20 },
-            { id: "SPAB303", nombre: "Metodología Invest.", sem: 8, cred: 5, req: ["SPAB111", "TMED731"], lab: null },
-            { id: "SPAB103", nombre: "Aseg. Calidad", sem: 8, cred: 8, req: ["SPAB112", "TMED731"], lab: null },
-            { id: "CEGPC13", nombre: "Pensamiento Crítico", sem: 8, cred: 5, req: ["CEGCT12"], lab: null },
+            { id: "SPAB303", nombre: "Metodología Invest.", sem: 8, cred: 5, req: ["SPAB111", "TMED731"], lab: 20 },
+            { id: "SPAB103", nombre: "Aseg. Calidad", sem: 8, cred: 8, req: ["SPAB112", "TMED731"], lab: 20 },
+            { id: "CEGPC13", nombre: "Pensamiento Crítico", sem: 8, cred: 5, req: ["CEGCT12"], lab: 20 },
             { id: "TMED831", nombre: "Radioterapia", sem: 8, cred: 19, req: ["TMED732", "TMED733"], lab: 20 },
             { id: "TMED832", nombre: "Resonancia Mag.", sem: 8, cred: 21, req: ["TMED733", "TMED734"], lab: 20 },
-            { id: "CEGRS14", nombre: "Resp. Social", sem: 9, cred: 6, req: ["CEGPC13"], lab: null },
-            { id: "TMED931", nombre: "Seminario IFIME", sem: 9, cred: 55, req: ["SPAB303", "SPAB103", "CEGPC13", "TMED831", "TMED832"], lab: null },
-            { id: "TMED932", nombre: "Internado IFIME", sem: 10, cred: 72, req: ["SPAB303", "SPAB103", "CEGPC13", "TMED831", "TMED832"], lab: null }
+            { id: "CEGRS14", nombre: "Resp. Social", sem: 9, cred: 6, req: ["CEGPC13"], lab: 20 },
+            { id: "TMED931", nombre: "Seminario IFIME", sem: 9, cred: 55, req: ["SPAB303", "SPAB103", "CEGPC13", "TMED831", "TMED832"], lab: 20 },
+            { id: "TMED932", nombre: "Internado IFIME", sem: 10, cred: 72, req: ["SPAB303", "SPAB103", "CEGPC13", "TMED831", "TMED832"], lab: 20 }
         ];
 
         let aprobadas = JSON.parse(localStorage.getItem('MALLA_UNAB_V3')) || [];
@@ -1132,23 +1132,32 @@
         // INSTALACIÓN
         // =============================================
         let deferredPrompt;
-        window.addEventListener('beforeinstallprompt', (e) => {
-            e.preventDefault();
-            deferredPrompt = e;
-            document.getElementById('installContainer').style.display = 'block';
-        });
+        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
 
-        document.getElementById('btnInstall').addEventListener('click', async () => {
-            if (deferredPrompt) {
-                deferredPrompt.prompt();
-                const { outcome } = await deferredPrompt.userChoice;
-                if (outcome === 'accepted') {
-                    document.getElementById('installContainer').style.display = 'none';
-                    showToast('App instalada', 'success');
+        if (isIOS) {
+            document.getElementById('installContainer').style.display = 'block';
+            document.getElementById('btnInstall').addEventListener('click', () => {
+                showToast('En Safari: toca Compartir > Agregar a pantalla de inicio', 'info', 5000);
+            });
+        } else {
+            window.addEventListener('beforeinstallprompt', (e) => {
+                e.preventDefault();
+                deferredPrompt = e;
+                document.getElementById('installContainer').style.display = 'block';
+            });
+
+            document.getElementById('btnInstall').addEventListener('click', async () => {
+                if (deferredPrompt) {
+                    deferredPrompt.prompt();
+                    const { outcome } = await deferredPrompt.userChoice;
+                    if (outcome === 'accepted') {
+                        document.getElementById('installContainer').style.display = 'none';
+                        showToast('App instalada', 'success');
+                    }
+                    deferredPrompt = null;
                 }
-                deferredPrompt = null;
-            }
-        });
+            });
+        }
 
         // =============================================
         // SPLASH SCREEN
