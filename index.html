@@ -1138,8 +1138,13 @@
         const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
         const isAndroid = /Android/.test(navigator.userAgent);
         const isStandalone = window.matchMedia('(display-mode: standalone)').matches || navigator.standalone === true;
+        const wasInstalled = localStorage.getItem('app_installed') === '1';
 
-        if (!isStandalone) {
+        if (isStandalone) {
+            localStorage.setItem('app_installed', '1');
+        }
+
+        if (!isStandalone && !wasInstalled) {
             document.getElementById('installContainer').style.display = 'block';
         }
 
@@ -1154,6 +1159,7 @@
                 const { outcome } = await deferredPrompt.userChoice;
                 if (outcome === 'accepted') {
                     document.getElementById('installContainer').style.display = 'none';
+                    localStorage.setItem('app_installed', '1');
                     showToast('App instalada', 'success');
                 }
                 deferredPrompt = null;
