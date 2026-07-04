@@ -3,7 +3,7 @@
   "name": "Malla Curricular IFIME - UNAB",
   "icons": [
     {
-      "src": "https://cdn-icons-png.flaticon.com/512/3534/3534139.png",
+      "src": "logo-unab.png",
       "type": "image/png",
       "sizes": "512x512",
       "purpose": "any maskable"
@@ -11,6 +11,6 @@
   ],
   "start_url": "./index.html",
   "display": "standalone",
-  "theme_color": "#002855",
+  "theme_color": "#1e2d4a",
   "background_color": "#f4f7f9"
 }

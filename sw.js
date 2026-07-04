@@ -1,7 +1,7 @@
-const CACHE_NAME = 'malla-ifime-v1';
+const CACHE_NAME = 'malla-ifime-v2';
 const assets = [
-  '/',
-  '/index.html',
+  './index.html',
+  './logo-unab.png',
   'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css'
 ];
 
@@ -10,6 +10,14 @@ self.addEventListener('install', event => {
     caches.open(CACHE_NAME).then(cache => {
       return cache.addAll(assets);
     })
+  );
+});
+
+self.addEventListener('activate', event => {
+  event.waitUntil(
+    caches.keys().then(keys =>
+      Promise.all(keys.filter(k => k !== CACHE_NAME).map(k => caches.delete(k)))
+    )
   );
 });
 
