@@ -13,20 +13,55 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
-            --unab-blue: #002855;
-            --unab-blue-light: #003d82;
-            --unab-red: #D62115;
-            --unab-red-light: #ff4d4d;
-            --bg-light: #f4f7f9;
+            --unab-blue: #1e2d4a;
+            --unab-blue-light: #2a3d5e;
+            --unab-red: #8b1a1a;
+            --unab-red-light: #b52a2a;
+            --bg-light: #f4f6f8;
             --state-passed: #2ecc71;
-            --state-passed-light: #c6f6d5;
-            --text-main: #2d3748;
-            --text-muted: #718096;
-            --note-blue: #0056b3;
+            --state-passed-light: #eaf7f0;
+            --text-main: #1e2d4a;
+            --text-muted: #5a6577;
+            --note-blue: #1e2d4a;
+            --ease-out: cubic-bezier(0.4, 0, 0.2, 1);
+            --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+            --card-bg: #fff;
+            --card-border: #dfe4ea;
+            --card-shadow: 0 2px 8px rgba(26,39,68,0.06);
+            --input-bg: #fff;
+            --input-border: #dfe4ea;
+            --section-bg: #f0f3f7;
+            --divider: #dfe4ea;
+            --tag-bg: #edf0f5;
         }
+        [data-theme="dark"] {
+            --bg-light: #0c0e14;
+            --text-main: #e2e4e8;
+            --text-muted: #8a92a0;
+            --card-bg: #151a25;
+            --card-border: #252d3d;
+            --card-shadow: 0 2px 12px rgba(0,0,0,0.4);
+            --input-bg: #1c2230;
+            --input-border: #2e374a;
+            --section-bg: #181d28;
+            --divider: #252d3d;
+            --tag-bg: #1c2230;
+            --state-passed-light: #162a20;
+            --note-blue: #5b9bd5;
+        }
+        [data-theme="dark"] .central-title { color: #e2e8f0; }
+        [data-theme="dark"] .dropdown-item { color: #e2e8f0; }
+        [data-theme="dark"] .sidenav-body { color: #e2e8f0; }
+        [data-theme="dark"] .ramo-name { color: #e2e8f0; }
+        [data-theme="dark"] .ramo-id { color: #a0aec0; }
+        [data-theme="dark"] .ramo-info { color: #a0aec0; }
+        [data-theme="dark"] .result-grade { color: #e2e8f0; }
+        [data-theme="dark"] .section-avg { color: #5b9bd5; }
+        [data-theme="dark"] .weight-locked { color: #a0aec0; }
+        [data-theme="dark"] .sem-header { color: #5b9bd5; }
 
         @media print {
-            .header, .menu-trigger, .btn-edit-nota, .overlay, .sidenav, .dropdown-menu, .central-title, .install-actions { display: none !important; }
+            .header, .menu-trigger, .btn-edit-nota, .overlay, .sidenav, .dropdown-menu, .central-title, .install-actions, #splash { display: none !important; }
             body { background: white; padding: 0; margin: 0; }
             .main-content { padding: 0; margin-top: 0; }
             .malla { gap: 5px; grid-template-columns: repeat(5, 1fr) !important; width: 100% !important; max-width: 100% !important; }
@@ -34,113 +69,433 @@
             .ramo-card { border: 1px solid #eee !important; box-shadow: none !important; }
         }
 
-        body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg-light); margin: 0; padding-bottom: 50px; color: var(--text-main); }
-
-        .header { 
-            background: var(--unab-blue); color: white; padding: 10px 40px; 
-            display: flex; justify-content: space-between; align-items: center;
-            position: sticky; top: 0; z-index: 1000; box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-            min-height: 60px;
+        #splash {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: #1e2d4a;
+            z-index: 10000; display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+            cursor: pointer; transition: transform 0.75s cubic-bezier(0.65, 0, 0.35, 1);
+            overflow: hidden;
         }
-        
-        .progress-header-line { position: absolute; top: 0; left: 0; width: 100%; height: 5px; background: rgba(255,255,255,0.05); z-index: 1; }
-        .progress-bar-fill { height: 100%; width: 0%; background: linear-gradient(90deg, var(--unab-red) 0%, var(--state-passed) 100%); transition: width 1.2s ease; }
+        #splash::before {
+            content: ""; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
+            background:
+                linear-gradient(135deg,
+                    transparent 0%,
+                    rgba(255,255,255,0.04) 15%,
+                    transparent 30%,
+                    rgba(0,0,0,0.06) 45%,
+                    transparent 55%,
+                    rgba(255,255,255,0.03) 70%,
+                    transparent 85%,
+                    rgba(0,0,0,0.04) 100%
+                );
+            pointer-events: none;
+            animation: silk-drift 12s ease-in-out infinite alternate;
+        }
+        #splash::after {
+            content: ""; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
+            background:
+                linear-gradient(160deg,
+                    transparent 0%,
+                    rgba(0,0,0,0.05) 20%,
+                    transparent 40%,
+                    rgba(255,255,255,0.03) 60%,
+                    transparent 80%
+                );
+            pointer-events: none;
+            animation: silk-drift 15s ease-in-out infinite alternate-reverse;
+        }
+        @keyframes silk-drift {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(3%, 2%); }
+        }
+        #splash.slide-down { transform: translateY(100%); }
+        #splash .splash-icon-wrap {
+            position: relative; margin-bottom: 28px;
+            animation: icon-enter 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
+        }
+        #splash .splash-icon-ring {
+            position: absolute; top: 50%; left: 50%; width: 80px; height: 80px;
+            border: 2px solid rgba(255,255,255,0.15); border-radius: 50%;
+            transform: translate(-50%, -50%);
+            animation: ring-pulse 3s ease-in-out infinite 0.8s;
+        }
+        #splash .splash-logo {
+            width: 150px; height: auto; position: relative; z-index: 1;
+            filter: drop-shadow(0 4px 24px rgba(0,0,0,0.3));
+            border-radius: 12px;
+            opacity: 0;
+            animation: logo-appear 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.1s forwards;
+        }
+        @keyframes logo-appear {
+            0% { opacity: 0; transform: scale(0.9); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+        #splash .splash-title {
+            font-size: 2.6rem; font-weight: 800; color: white;
+            letter-spacing: 6px; margin: 0; opacity: 0;
+            animation: text-up 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.2s both;
+        }
+        #splash .splash-sub {
+            font-size: 0.85rem; color: rgba(255,255,255,0.5);
+            margin-top: 10px; letter-spacing: 3px; text-transform: uppercase;
+            font-weight: 500; opacity: 0;
+            animation: text-up 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.35s both;
+        }
+        #splash .splash-line {
+            width: 40px; height: 2px; background: rgba(255,255,255,0.2);
+            margin: 16px 0; border-radius: 1px; opacity: 0;
+            animation: line-grow 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.5s both;
+        }
+        #splash .splash-univ {
+            font-size: 0.7rem; color: rgba(255,255,255,0.3);
+            letter-spacing: 1px; opacity: 0;
+            animation: text-up 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.6s both;
+        }
+        #splash .splash-hint {
+            position: absolute; bottom: 36px;
+            font-size: 0.7rem; color: rgba(255,255,255,0.25);
+            letter-spacing: 1px; opacity: 0;
+            animation: hint-appear 1s ease 1.5s both;
+        }
+        @keyframes icon-enter {
+            0% { opacity: 0; transform: scale(0.5) translateY(20px); }
+            100% { opacity: 1; transform: scale(1) translateY(0); }
+        }
+        @keyframes icon-float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-4px); }
+        }
+        @keyframes ring-pulse {
+            0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.3; }
+            50% { transform: translate(-50%, -50%) scale(1.15); opacity: 0.08; }
+        }
+        @keyframes text-up {
+            0% { opacity: 0; transform: translateY(14px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes line-grow {
+            0% { opacity: 0; width: 0; }
+            100% { opacity: 1; width: 40px; }
+        }
+        @keyframes hint-appear {
+            0% { opacity: 0; }
+            100% { opacity: 1; }
+        }
 
-        .header-brand h1 { margin: 0; font-size: 1.2rem; font-weight: 900; letter-spacing: 1px; }
+        #app {
+            opacity: 0; transition: opacity 0.6s ease 0.3s;
+        }
+        #app.visible { opacity: 1; }
+
+        body {
+            font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: var(--bg-light); margin: 0; padding-bottom: 50px;
+            color: var(--text-main); -webkit-font-smoothing: antialiased;
+        }
+
+        .header {
+            background: var(--unab-blue); color: white; padding: 10px 40px;
+            display: flex; justify-content: space-between; align-items: center;
+            position: sticky; top: 0; z-index: 1000;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08); min-height: 60px;
+        }
+
+        .progress-header-line { position: absolute; top: 0; left: 0; width: 100%; height: 4px; background: rgba(255,255,255,0.06); z-index: 1; }
+        .progress-bar-fill { height: 100%; width: 0%; background: linear-gradient(90deg, var(--unab-red), var(--state-passed)); transition: width 0.8s var(--ease-out); }
+
+        .header-logo { height: 34px; width: auto; margin-right: 10px; vertical-align: middle; border-radius: 4px; }
+        .header-brand h1 { margin: 0; font-size: 1.15rem; font-weight: 700; letter-spacing: 0.5px; color: #fff; display: inline; vertical-align: middle; }
 
         .install-actions { display: none; margin-right: 15px; }
         .btn-install-header {
-            background: var(--unab-red); color: white; border: 1px solid rgba(255,255,255,0.2);
-            padding: 8px 12px; border-radius: 6px; font-size: 0.75rem; font-weight: 800;
-            cursor: pointer; display: flex; align-items: center; gap: 6px; transition: 0.3s; text-transform: uppercase;
+            background: var(--unab-red); color: white; border: none;
+            padding: 8px 14px; border-radius: 6px; font-size: 0.75rem; font-weight: 600;
+            cursor: pointer; display: flex; align-items: center; gap: 6px;
+            transition: 0.2s var(--ease-out); text-transform: uppercase;
         }
-        .btn-install-header:hover { background: #fff; color: var(--unab-red); }
+        .btn-install-header:hover { background: #6d1515; }
 
-        .stats-container { display: flex; align-items: center; gap: 15px; }
-        .stat-box { text-align: right; border-right: 1px solid rgba(255,255,255,0.2); padding-right: 15px; }
-        .stat-val { display: block; font-weight: 800; font-size: 1.1rem; color: white; }
-        .stat-lbl { font-size: 0.55rem; text-transform: uppercase; opacity: 0.8; }
+        .stats-container { display: flex; align-items: center; gap: 12px; }
+        .stat-box { text-align: right; border-right: 1px solid rgba(255,255,255,0.15); padding-right: 12px; }
+        .stat-box:last-child { border: none; padding-right: 0; }
+        .stat-val { display: block; font-weight: 700; font-size: 1.05rem; color: white; }
+        .stat-lbl { font-size: 0.55rem; text-transform: uppercase; opacity: 0.7; letter-spacing: 0.3px; }
 
-        .menu-trigger { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: white; padding: 10px 18px; border-radius: 8px; cursor: pointer; margin-left: 10px;}
+        .menu-trigger {
+            background: rgba(255,255,255,0.08); border: none;
+            color: white; padding: 10px 16px; border-radius: 8px;
+            cursor: pointer; margin-left: 8px; transition: 0.2s var(--ease-out);
+        }
+        .menu-trigger:hover { background: rgba(255,255,255,0.18); }
 
-        .dropdown-menu { position: absolute; right: 40px; top: 62px; background: white; width: 200px; border-radius: 10px; box-shadow: 0 8px 20px rgba(0,0,0,0.2); display: none; flex-direction: column; overflow: hidden; z-index: 1100; border: 1px solid #e2e8f0; }
-        .dropdown-menu.active { display: flex; }
-        .dropdown-item { padding: 12px 20px; border: none; background: none; text-align: left; cursor: pointer; font-size: 0.85rem; width: 100%; color: var(--unab-blue); font-weight: 600; border-bottom: 1px solid #f1f5f9; }
-        
-        .central-title { text-align: center; padding: 40px 20px; color: var(--unab-blue); }
-        .central-title h2 { margin: 0; font-size: 2.2rem; font-weight: 900; text-transform: uppercase; position: relative; padding-bottom: 15px; display: inline-block; }
-        .central-title h2::after { content: ""; position: absolute; left: 50%; bottom: 0; transform: translateX(-50%); width: 60px; height: 6px; background: linear-gradient(90deg, var(--unab-red) 0%, var(--unab-red-light) 100%); border-radius: 10px; }
-        
+        .dropdown-menu {
+            position: absolute; right: 40px; top: 62px; background: var(--card-bg);
+            width: 200px; border-radius: 10px; box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+            display: none; flex-direction: column; overflow: hidden; z-index: 1100;
+            border: 1px solid var(--card-border);
+            opacity: 0; transform: translateY(-4px);
+            transition: 0.2s var(--ease-out);
+        }
+        .dropdown-menu.active { display: flex; opacity: 1; transform: translateY(0); }
+        .dropdown-item {
+            padding: 12px 20px; border: none; background: none; text-align: left;
+            cursor: pointer; font-size: 0.85rem; width: 100%;
+            color: var(--unab-blue); font-weight: 600; border-bottom: 1px solid var(--divider);
+            transition: 0.15s var(--ease-out);
+        }
+        .dropdown-item:last-child { border: none; }
+        .dropdown-item:hover { background: var(--section-bg); }
+
+        .central-title { text-align: center; padding: 36px 20px 16px; color: var(--unab-blue); }
+        .central-title h2 {
+            margin: 0; font-size: 2rem; font-weight: 800; text-transform: uppercase;
+            letter-spacing: 1px;
+            animation: fade-up 0.5s var(--ease-out);
+        }
+        @keyframes fade-up {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .central-title h2::after {
+            content: ""; display: block; margin: 10px auto 0;
+            width: 50px; height: 4px;
+            background: linear-gradient(90deg, var(--unab-red), var(--unab-red-light));
+            border-radius: 4px;
+        }
+        .central-title .subtitle {
+            color: var(--text-muted); font-size: 0.85rem; margin-top: 6px;
+            animation: fade-up 0.5s var(--ease-out) 0.15s both;
+        }
+
         .main-content { padding: 0 15px; display: flex; justify-content: center; }
         .malla { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; width: 100%; max-width: 1550px; }
-        
+
         @media (max-width: 1200px) { .malla { grid-template-columns: repeat(3, 1fr); } }
-        @media (max-width: 700px) { 
-            .malla { grid-template-columns: 1fr; } 
+        @media (max-width: 700px) {
+            .malla { grid-template-columns: 1fr; }
             .header-brand h1 span { display: none; }
             .install-actions { margin-right: 5px; }
-            .btn-install-header span { display: none; } 
+            .btn-install-header span { display: none; }
+            .central-title h2 { font-size: 1.4rem; }
         }
 
-        .semestre { background: rgba(255,255,255,0.6); border-radius: 12px; padding: 15px; border: 1px solid #e2e8f0; transition: all 0.4s ease; position: relative;}
-        .semestre.completed { border-color: var(--state-passed); background: #fff; box-shadow: 0 10px 20px rgba(46, 204, 113, 0.1); }
-        
-        /* Subrayado dinámico de Títulos de Semestre */
-        .sem-header { text-align: center; color: var(--unab-blue); font-weight: 800; font-size: 0.75rem; margin-bottom: 18px; text-transform: uppercase; position: relative; padding-bottom: 10px; transition: 0.3s;}
-        .sem-header::after { content: ""; position: absolute; left: 50%; bottom: 0; transform: translateX(-50%); width: 0; height: 3px; background: var(--unab-blue); transition: width 0.3s ease; border-radius: 4px; }
-        .semestre:hover .sem-header::after { width: 40px; }
-        .semestre.completed:hover .sem-header::after { background: var(--state-passed); }
+        .semestre {
+            background: var(--card-bg); border-radius: 12px; padding: 14px;
+            border: 1px solid var(--card-border); transition: 0.25s var(--ease-out);
+            animation: fade-up 0.4s var(--ease-out) backwards;
+        }
+        .semestre:hover { border-color: var(--unab-blue); }
+        .semestre.completed { border-color: var(--state-passed); }
 
-        .ramo { position: relative; margin-bottom: 12px; transition: 0.3s; }
-        .ramo-card { width: 100%; min-height: 85px; background: #fff; border: 1px solid #e2e8f0; border-radius: 10px; display: flex; flex-direction: column; justify-content: center; padding: 12px 18px; box-sizing: border-box; cursor: pointer; position: relative; transition: 0.3s; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
-        .ramo-card::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 6px; background: #cbd5e0; transition: all 0.3s ease; border-radius: 10px 0 0 10px; }
-        
-        /* Mejoras en el resaltado dinámico de ramos */
-        .ramo.is-req .ramo-card { border-color: var(--unab-red); box-shadow: 0 0 12px rgba(214, 33, 21, 0.3); transform: translateY(-2px); }
-        .ramo.is-target .ramo-card { border-color: var(--note-blue); box-shadow: 0 0 12px rgba(0, 86, 179, 0.3); transform: translateY(-2px); }
-        .ramo.is-req .ramo-card::before { background: var(--unab-red); width: 10px; }
-        .ramo.is-target .ramo-card::before { background: var(--note-blue); width: 10px; }
+        .sem-header {
+            text-align: center; color: var(--unab-blue); font-weight: 700;
+            font-size: 0.72rem; margin-bottom: 14px; text-transform: uppercase;
+            letter-spacing: 0.5px; opacity: 0.7; transition: 0.2s var(--ease-out);
+        }
+        .semestre:hover .sem-header { opacity: 1; }
 
-        .ramo.passed .ramo-card { background: #f0fff4; border: 1px solid var(--state-passed-light); }
-        .ramo.passed .ramo-card::before { background: var(--state-passed); width: 9px; }
+        .ramo { position: relative; margin-bottom: 10px; }
+        .ramo-card {
+            width: 100%; min-height: 80px; background: var(--card-bg); border: 1px solid var(--card-border);
+            border-radius: 10px; display: flex; flex-direction: column; justify-content: center;
+            padding: 10px 16px; box-sizing: border-box; cursor: pointer; position: relative;
+            transition: 0.2s var(--ease-out);
+            box-shadow: var(--card-shadow);
+        }
+        .ramo-card::before {
+            content: ""; position: absolute; left: 0; top: 0; bottom: 0;
+            width: 5px; background: #cbd5e0; transition: 0.2s var(--ease-out);
+            border-radius: 10px 0 0 10px;
+        }
+        .ramo:hover .ramo-card {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.08);
+        }
+
+        .ramo.is-req .ramo-card { border-color: var(--unab-red); box-shadow: 0 0 8px rgba(214,33,21,0.15); }
+        .ramo.is-target .ramo-card { border-color: var(--note-blue); box-shadow: 0 0 8px rgba(0,86,179,0.15); }
+        .ramo.is-req .ramo-card::before { background: var(--unab-red); width: 8px; }
+        .ramo.is-target .ramo-card::before { background: var(--note-blue); width: 8px; }
+
+        .ramo.passed .ramo-card { background: var(--state-passed-light); border-color: var(--state-passed); }
+        .ramo.passed .ramo-card::before { background: var(--state-passed); width: 8px; }
         .ramo.unlocked .ramo-card::before { background: var(--unab-blue); }
-        .ramo.locked { opacity: 0.6; cursor: not-allowed; }
-        
-        .ramo-name { font-weight: 700; font-size: 0.78rem; color: var(--text-main); }
-        .ramo-info { font-size: 0.62rem; color: var(--text-muted); font-weight: 600; }
-        .btn-edit-nota { position: absolute; top: 8px; right: 8px; width: 24px; height: 24px; background: #f1f5f9; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; color: var(--unab-blue); opacity: 0; cursor: pointer; z-index: 5;}
+        .ramo.locked { opacity: 0.5; cursor: not-allowed; }
+
+        .ramo-name { font-weight: 600; font-size: 0.76rem; color: var(--text-main); }
+        .ramo-info { font-size: 0.6rem; color: var(--text-muted); font-weight: 500; }
+        .btn-edit-nota {
+            position: absolute; top: 6px; right: 6px; width: 22px; height: 22px;
+            background: var(--section-bg); border-radius: 5px; display: flex;
+            align-items: center; justify-content: center; font-size: 0.65rem;
+            color: var(--unab-blue); opacity: 0; cursor: pointer; z-index: 5;
+            transition: 0.2s var(--ease-out);
+        }
         .ramo:hover .btn-edit-nota { opacity: 1; }
-        .ramo-grade-tag { position: absolute; bottom: 8px; right: 10px; font-weight: 800; font-size: 0.95rem; }
-        
-        .sidenav { height: 100%; width: 0; position: fixed; z-index: 2000; top: 0; right: 0; background: #fff; transition: 0.4s; box-shadow: -10px 0 40px rgba(0,0,0,0.2); overflow-x: hidden; }
-        .sidenav-header { background: var(--unab-blue); padding: 30px; color: white; position: relative; }
-        .sidenav-body { padding: 25px; }
-        
-        .lab-config { background: #f8f9fa; padding: 15px; border-radius: 8px; margin-bottom: 20px; border-left: 4px solid var(--unab-blue); }
-        .lab-config-label { font-size: 0.75rem; font-weight: 700; color: var(--text-main); text-transform: uppercase; margin-bottom: 8px; display: block; }
-        .lab-config-input { width: 100%; padding: 8px; border: 1px solid #cbd5e0; border-radius: 6px; font-size: 0.85rem; box-sizing: border-box; }
-        .lab-config-helper { font-size: 0.7rem; color: var(--text-muted); margin-top: 6px; }
-        
-        .calc-section-title { font-size: 0.75rem; font-weight: 700; color: var(--unab-blue); text-transform: uppercase; margin-top: 15px; margin-bottom: 10px; padding-bottom: 8px; border-bottom: 2px solid #e2e8f0; }
-        .calc-row { display: grid; grid-template-columns: 1fr 1fr 40px; gap: 10px; margin-bottom: 10px; align-items: center; }
-        .calc-input { padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 0.9rem; width: 100%; box-sizing: border-box;}
-        .btn-add-nota { background: #e2e8f0; border: none; padding: 10px; border-radius: 6px; cursor: pointer; width: 100%; font-weight: bold; margin-bottom: 20px; }
-        .btn-remove { color: var(--unab-red); border: none; background: none; cursor: pointer; font-size: 1rem; }
-        .result-box { background: #f8fafc; padding: 20px; border-radius: 10px; text-align: center; margin-top: 20px; border: 2px dashed #cbd5e0; }
-        .result-grade { font-size: 2.5rem; font-weight: 900; color: var(--unab-blue); margin: 0; min-height: 3.5rem;}
-        .btn-save { background: var(--unab-blue); color: white; border: none; padding: 15px; border-radius: 10px; font-weight: 800; cursor: pointer; width: 100%; margin-top: 20px; }
-        .overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); z-index: 1500; }
-        .sem-row { display:flex; justify-content:space-between; padding:10px 0; border-bottom:1px solid #f0f4f8; font-size:0.85rem; }
+        .btn-edit-nota:hover { background: var(--unab-blue); color: white; }
+
+        .ramo-grade-tag {
+            position: absolute; bottom: 6px; right: 8px;
+            font-weight: 700; font-size: 0.9rem;
+        }
+
+        .sidenav {
+            height: 100%; width: 0; position: fixed; z-index: 2000;
+            top: 0; right: 0; background: var(--card-bg);
+            transition: width 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: -8px 0 30px rgba(0,0,0,0.1); overflow-x: hidden;
+        }
+        .sidenav-header { background: var(--unab-blue); padding: 28px; color: white; position: relative; }
+        .sidenav-body { padding: 24px; }
+
+        .calc-row {
+            display: grid; grid-template-columns: 1fr 1fr 36px;
+            gap: 8px; margin-bottom: 8px; align-items: center;
+        }
+        .calc-input {
+            padding: 10px; border: 1px solid var(--input-border); border-radius: 8px;
+            font-size: 0.85rem; width: 100%; box-sizing: border-box;
+            transition: 0.2s var(--ease-out); background: var(--input-bg); color: var(--text-main);
+        }
+        .calc-input:focus {
+            border-color: var(--unab-blue); outline: none;
+            background: var(--input-bg); box-shadow: 0 0 0 3px rgba(0,40,85,0.06);
+        }
+        .btn-add-nota {
+            background: var(--section-bg); border: 1px solid var(--card-border);
+            padding: 10px; border-radius: 8px; cursor: pointer;
+            width: 100%; font-weight: 600; font-size: 0.85rem; margin-bottom: 16px;
+            transition: 0.15s var(--ease-out); color: var(--unab-blue);
+        }
+        .btn-add-nota:hover { background: var(--input-border); }
+        .btn-remove {
+            color: var(--unab-red); border: none; background: none;
+            cursor: pointer; font-size: 1rem; transition: 0.15s var(--ease-out);
+        }
+        .btn-remove:hover { color: #6d1515; }
+
+        .result-box {
+            background: var(--section-bg); padding: 20px; border-radius: 10px;
+            text-align: center; margin-top: 16px;
+            border: 2px dashed var(--card-border); transition: 0.3s var(--ease-out);
+        }
+        .result-box.has-grade { border-color: var(--state-passed); border-style: solid; }
+        .result-grade {
+            font-size: 2.2rem; font-weight: 700; color: var(--unab-blue);
+            margin: 0; min-height: 3rem;
+            transition: 0.2s var(--ease-out);
+        }
+        .btn-save {
+            background: var(--unab-blue); color: white; border: none;
+            padding: 14px; border-radius: 8px; font-weight: 600;
+            cursor: pointer; width: 100%; margin-top: 16px;
+            transition: 0.2s var(--ease-out); font-size: 0.85rem;
+        }
+        .btn-save:hover { background: var(--unab-blue-light); }
+
+        .overlay {
+            display: none; position: fixed; top: 0; left: 0; width: 100%;
+            height: 100%; background: rgba(0,0,0,0.3); z-index: 1500;
+        }
+        .sem-row {
+            display: flex; justify-content: space-between; padding: 10px 0;
+            border-bottom: 1px solid var(--divider); font-size: 0.85rem;
+        }
+
+        .toast {
+            position: fixed; bottom: 24px; right: 24px; z-index: 9999;
+            background: var(--unab-blue); color: white; padding: 12px 20px;
+            border-radius: 10px; font-weight: 500; font-size: 0.85rem;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+            transform: translateY(16px); opacity: 0;
+            transition: 0.3s var(--ease-out); pointer-events: none;
+        }
+        .exam-toggle {
+            position: relative; display: inline-block; width: 38px; height: 20px; cursor: pointer;
+        }
+        .exam-toggle input { opacity: 0; width: 0; height: 0; }
+        .exam-slider {
+            position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+            background: var(--input-border); border-radius: 20px;
+            transition: 0.3s var(--ease-out);
+        }
+        .exam-slider::before {
+            content: ""; position: absolute; height: 16px; width: 16px; left: 2px; bottom: 2px;
+            background: white; border-radius: 50%;
+            transition: 0.3s var(--ease-out);
+        }
+        .exam-toggle input:checked + .exam-slider { background: var(--unab-red); }
+        .exam-toggle input:checked + .exam-slider::before { transform: translateX(18px); }
+        .section-split {
+            display: flex; align-items: center; gap: 12px;
+            margin-bottom: 14px; padding: 12px 14px; background: var(--section-bg);
+            border-radius: 10px; border: 1px solid var(--card-border);
+        }
+        .section-split .weight-label {
+            font-size: 0.7rem; font-weight: 600; color: var(--text-muted);
+            text-transform: uppercase; letter-spacing: 0.3px; white-space: nowrap;
+        }
+        .section-split .weight-bar {
+            flex: 1; height: 6px; background: #e2e8f0; border-radius: 3px;
+            overflow: hidden; display: flex;
+        }
+        .section-split .weight-bar .bar-theory { background: var(--unab-blue); height: 100%; transition: width 0.3s ease; }
+        .section-split .weight-bar .bar-lab { background: var(--unab-red); height: 100%; transition: width 0.3s ease; }
+        .section-split .weight-input-group {
+            display: flex; align-items: center; gap: 4px; background: var(--input-bg);
+            border: 1px solid var(--input-border); border-radius: 8px; padding: 4px 8px;
+        }
+        .section-split .weight-input-group i { font-size: 0.65rem; color: var(--text-muted); }
+        .section-split .weight-input-group input {
+            width: 36px; padding: 4px 2px; border: none; border-radius: 4px;
+            text-align: center; font-size: 0.8rem; font-weight: 700;
+            background: transparent; color: var(--unab-red);
+        }
+        .section-split .weight-input-group input:focus { outline: none; }
+        .section-split .weight-input-group span { font-size: 0.7rem; color: var(--text-muted); }
+        .section-split .weight-locked {
+            font-size: 0.68rem; color: var(--text-muted); font-weight: 500;
+        }
+        .section-header {
+            font-size: 0.68rem; font-weight: 600; color: var(--text-muted);
+            text-transform: uppercase; letter-spacing: 0.4px;
+            margin: 14px 0 8px; padding-bottom: 6px;
+            border-bottom: 1px solid var(--divider);
+        }
+        .section-header i { margin-right: 4px; font-size: 0.65rem; }
+        .section-avg {
+            font-size: 0.7rem; color: var(--unab-blue); font-weight: 600;
+            margin: 6px 0 0; text-align: right;
+        }
+        .toast.show { transform: translateY(0); opacity: 1; }
+        .toast.success { background: var(--state-passed); }
+        .toast.error { background: var(--unab-red); }
     </style>
 </head>
 <body>
 
+    <div id="splash" onclick="dismissSplash()">
+        <div class="splash-icon-wrap">
+            <div class="splash-icon-ring"></div>
+            <img src="logo-unab.png" alt="UNAB" class="splash-logo">
+        </div>
+        <h1 class="splash-title">IFIME</h1>
+        <p class="splash-sub">Malla Curricular</p>
+        <div class="splash-line"></div>
+        <p class="splash-univ">Universidad Andrés Bello</p>
+        <p class="splash-hint">Click para continuar</p>
+    </div>
+
+    <div id="app">
     <div class="overlay" id="overlay" onclick="closeNav()"></div>
+    <div class="toast" id="toast"></div>
 
     <header class="header">
         <div class="progress-header-line"><div class="progress-bar-fill" id="topProgressBar"></div></div>
-        <div class="header-brand"><h1>IFIME <span style="font-weight:300; font-size:0.8rem; opacity:0.7;">| UNAB</span></h1></div>
-        
+        <div class="header-brand"><img src="logo-unab.png" alt="UNAB" class="header-logo"><h1>IFIME <span style="font-weight:300; font-size:0.8rem; opacity:0.6;">| UNAB</span></h1></div>
+
         <div style="display: flex; align-items: center;">
             <div class="install-actions" id="installContainer" style="display: none;">
                 <button class="btn-install-header" id="btnInstall">
@@ -152,54 +507,77 @@
                 <div class="stat-box"><span class="stat-val" id="cTotal">0</span><span class="stat-lbl">Créditos</span></div>
                 <div class="stat-box" style="border:none"><span class="stat-val" id="pPct">0%</span><span class="stat-lbl">Avance</span></div>
             </div>
-            <button class="menu-trigger" onclick="toggleMenu()"><i class="fas fa-bars"></i></button>
+            <button class="menu-trigger" onclick="toggleMenu()"><i class="fas fa-ellipsis-v"></i></button>
             <div class="dropdown-menu" id="dropdownMenu">
-                <button class="dropdown-item" onclick="openNav(null); toggleMenu();">Resumen</button>
-                <button class="dropdown-item" onclick="window.print(); toggleMenu();">Exportar PDF</button>
-                <button class="dropdown-item" onclick="resetAll()">Reiniciar</button>
+                <button class="dropdown-item" onclick="openNav(null); toggleMenu();"><i class="fas fa-chart-pie" style="margin-right:8px"></i>Resumen</button>
+                <button class="dropdown-item" onclick="window.print(); toggleMenu();"><i class="fas fa-file-export" style="margin-right:8px"></i>Exportar PDF</button>
+                <button class="dropdown-item" onclick="toggleDarkMode()"><i class="fas fa-moon" style="margin-right:8px" id="darkModeIcon"></i><span id="darkModeLabel">Modo Oscuro</span></button>
+                <button class="dropdown-item" onclick="resetAll()"><i class="fas fa-trash-alt" style="margin-right:8px"></i>Reiniciar</button>
             </div>
         </div>
     </header>
 
-    <div class="central-title"><h2>Malla Curricular IFIME</h2></div>
+    <div class="central-title">
+        <h2>Malla Curricular IFIME</h2>
+        <p class="subtitle"><i class="fas fa-graduation-cap"></i> Tecnología Médica — UNAB</p>
+    </div>
 
     <div id="sideNav" class="sidenav">
         <div class="sidenav-header">
-            <span style="position:absolute; top:15px; right:15px; cursor:pointer" onclick="closeNav()"><i class="fas fa-times"></i></span>
-            <h3 id="activeRamoName" style="margin:0">Materia</h3>
+            <span style="position:absolute; top:14px; right:16px; cursor:pointer; opacity:0.7; transition:0.2s" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0.7" onclick="closeNav()"><i class="fas fa-times"></i></span>
+            <h3 id="activeRamoName" style="margin:0; font-weight:600">Materia</h3>
         </div>
         <div class="sidenav-body">
             <div id="calculadoraContainer" style="display:none;">
-                <div class="lab-config">
-                    <label class="lab-config-label">Porcentaje de Laboratorio</label>
-                    <input type="number" id="labPercentageInput" class="lab-config-input" min="0" max="100" step="1" placeholder="Ej: 30" oninput="onLabPercentageChange()">
-                    <div class="lab-config-helper" id="labConfigHelper">Las notas del ramo ocuparán el porcentaje restante</div>
+                <div id="theoryWeightRow" class="section-split">
+                    <span class="weight-label">Lab</span>
+                    <div class="weight-input-group">
+                        <i class="fas fa-flask"></i>
+                        <input id="labWeightInput" type="number" min="0" max="100" value="20" oninput="calculateWeighted(); saveWeights()">
+                        <span>%</span>
+                    </div>
+                    <div class="weight-bar">
+                        <div class="bar-theory" id="barTheory" style="width:80%"></div>
+                        <div class="bar-lab" id="barLab" style="width:20%"></div>
+                    </div>
+                    <span class="weight-locked" id="theoryLocked">Teo: 80%</span>
                 </div>
-                
-                <div class="calc-section-title">Notas del Ramo</div>
-                <div id="notasInputs"></div>
-                <button class="btn-add-nota" onclick="addRow()"><i class="fas fa-plus"></i> Agregar nota</button>
-                
-                <div class="calc-section-title">Notas de Laboratorio</div>
-                <div id="labNotasInputs"></div>
-                <button class="btn-add-nota" onclick="addLabRow()" style="margin-bottom: 20px;"><i class="fas fa-plus"></i> Agregar nota lab</button>
-                
-                <div class="result-box">
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; text-align: center; margin-bottom: 12px;">
-                        <div>
-                            <p style="margin:0; font-size:0.7rem; font-weight:bold; color:var(--text-muted)">PROMEDIO RAMO</p>
-                            <h3 id="ramoCalcGrade" style="margin:0; color: var(--unab-blue); font-size: 1.3rem;">-</h3>
-                        </div>
-                        <div>
-                            <p style="margin:0; font-size:0.7rem; font-weight:bold; color:var(--text-muted)">PROMEDIO LAB</p>
-                            <h3 id="labCalcGrade" style="margin:0; color: var(--unab-blue); font-size: 1.3rem;">-</h3>
+
+                <div class="section-header"><i class="fas fa-book"></i> Teoría</div>
+                <div id="theoryInputs"></div>
+                <button class="btn-add-nota" onclick="addRow('theory')"><i class="fas fa-plus" style="margin-right:6px"></i>Agregar Nota</button>
+                <p class="section-avg" id="theoryAvg"></p>
+
+                <div id="labSection">
+                    <div class="section-header"><i class="fas fa-flask"></i> Laboratorio</div>
+                    <div id="labInputs"></div>
+                    <button class="btn-add-nota" onclick="addRow('lab')"><i class="fas fa-plus" style="margin-right:6px"></i>Agregar Nota</button>
+                    <p class="section-avg" id="labAvg"></p>
+                </div>
+
+                <div id="examSection" style="display:none; margin-top: 14px;">
+                    <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom: 10px;">
+                        <div class="section-header" style="margin:0; border:none; padding:0;"><i class="fas fa-pen"></i> Examen (30%)</div>
+                        <label class="exam-toggle">
+                            <input type="checkbox" id="examToggle" onchange="toggleExam()">
+                            <span class="exam-slider"></span>
+                        </label>
+                    </div>
+                    <div id="examInput" style="display:none;">
+                        <div class="calc-row" style="grid-template-columns: 1fr;">
+                            <input type="number" step="0.1" min="1" max="7" class="calc-input nota exam-grade" placeholder="Nota de examen" oninput="calculateWeighted()">
                         </div>
                     </div>
-                    <p style="margin:8px 0 0 0; font-size:0.7rem; font-weight:bold; color:var(--text-muted)">NOTA FINAL</p>
-                    <h1 class="result-grade" id="finalCalcGrade"></h1>
-                    <p id="weightAlert" style="font-size:0.65rem; margin-top:5px; color:var(--unab-red)"></p>
+                    <p id="examNeed" style="font-size:0.7rem; margin-top:8px; font-weight:600; color:var(--note-blue); min-height:1.2em"></p>
                 </div>
-                <button class="btn-save" onclick="saveGrade()">GUARDAR RAMO</button>
+
+                <div class="result-box" id="resultBox">
+                    <p style="margin:0; font-size:0.65rem; font-weight:600; color:var(--text-muted)">PROMEDIO FINAL</p>
+                    <h1 class="result-grade" id="finalCalcGrade"></h1>
+                    <p id="weightAlert" style="font-size:0.6rem; margin-top:4px; color:var(--unab-red)"></p>
+                    <p id="needGrade" style="font-size:0.7rem; margin-top:8px; font-weight:600; color:var(--note-blue); min-height:1.2em"></p>
+                </div>
+                <button class="btn-save" onclick="saveGrade()"><i class="fas fa-check" style="margin-right:6px"></i>GUARDAR RAMO</button>
             </div>
             <div id="resumenContainer"></div>
         </div>
@@ -208,87 +586,164 @@
     <div class="main-content"><div class="malla" id="mallaGrid"></div></div>
 
     <script>
-        // LÓGICA DE INSTALACIÓN CORREGIDA
-        let deferredPrompt;
-        window.addEventListener('beforeinstallprompt', (e) => {
-            e.preventDefault();
-            deferredPrompt = e;
-            document.getElementById('installContainer').style.display = 'block';
-        });
+        // =============================================
+        // TOAST
+        // =============================================
+        function showToast(msg, type) {
+            const t = document.getElementById('toast');
+            t.className = 'toast ' + (type || '');
+            t.innerHTML = msg;
+            t.classList.add('show');
+            clearTimeout(t._timeout);
+            t._timeout = setTimeout(() => t.classList.remove('show'), 2200);
+        }
 
-        document.getElementById('btnInstall').addEventListener('click', async () => {
-            if (deferredPrompt) {
-                deferredPrompt.prompt();
-                const { outcome } = await deferredPrompt.userChoice;
-                if (outcome === 'accepted') document.getElementById('installContainer').style.display = 'none';
-                deferredPrompt = null;
+        // =============================================
+        // CONTADOR ANIMADO
+        // =============================================
+        function animateCounter(el, target, suffix, duration) {
+            const start = performance.now();
+            const from = parseFloat(el.innerText) || 0;
+            function step(now) {
+                const p = Math.min((now - start) / (duration || 700), 1);
+                const v = from + (target - from) * (1 - Math.pow(1 - p, 3));
+                el.innerText = (target % 1 === 0) ? Math.round(v) + (suffix || '') : v.toFixed(2) + (suffix || '');
+                if (p < 1) requestAnimationFrame(step);
             }
-        });
+            requestAnimationFrame(step);
+        }
 
+        // =============================================
+        // DATOS
+        // =============================================
         const materias = [
-            { id: "MORFO10", nombre: "Anatomía Humana", sem: 1, cred: 12, req: [] },
-            { id: "BIOL130", nombre: "Biología Celular", sem: 1, cred: 8, req: [] },
-            { id: "QUIM102", nombre: "Química General", sem: 1, cred: 16, req: [] },
-            { id: "TMED001", nombre: "Intro. a Tec. Médica", sem: 1, cred: 5, req: [] },
-            { id: "FMMP101", nombre: "Álgebra y Cálculo", sem: 1, cred: 14, req: [] },
-            { id: "MORF122", nombre: "Histoembriología", sem: 2, cred: 14, req: ["BIOL130", "MORFO10"] },
-            { id: "CFIS020", nombre: "Física General", sem: 2, cred: 12, req: ["FMMP101"] },
-            { id: "QUIM022", nombre: "Química Orgánica", sem: 2, cred: 15, req: ["QUIM102"] },
-            { id: "ING119", nombre: "Inglés I", sem: 2, cred: 12, req: [] },
-            { id: "CEGHC11", nombre: "Hab. Comunicativas", sem: 2, cred: 8, req: [] },
-            { id: "BIOL272", nombre: "Fisiología Humana", sem: 3, cred: 11, req: ["MORF122"] },
-            { id: "BIOL166", nombre: "Bioquímica", sem: 3, cred: 8, req: ["QUIM022"] },
-            { id: "TMED003", nombre: "Bioética", sem: 3, cred: 8, req: ["TMED001", "CEGHC11"] },
-            { id: "TMED004", nombre: "Infectología", sem: 3, cred: 8, req: ["BIOL130"] },
-            { id: "ING129", nombre: "Inglés II", sem: 3, cred: 12, req: ["ING119"] },
-            { id: "CEGCT12", nombre: "Razon. Científico", sem: 3, cred: 6, req: ["CEGHC11"] },
-            { id: "TMED005", nombre: "Fisiopatología", sem: 4, cred: 15, req: ["BIOL272"] },
-            { id: "FARM171", nombre: "Farmacología", sem: 4, cred: 5, req: ["BIOL166"] },
-            { id: "ING239", nombre: "Inglés III", sem: 4, cred: 12, req: ["ING129"] },
-            { id: "TMED431", nombre: "Prot. Radiológica", sem: 4, cred: 6, req: ["CFIS020", "BIOL272", "BIOL166", "TMED003", "TMED004", "ING129", "CEGCT12"] },
-            { id: "TMED432", nombre: "Radiodiagnóstico I", sem: 4, cred: 20, req: ["CFIS020", "BIOL272", "BIOL166", "TMED003", "TMED004", "ING129", "CEGCT12"] },
-            { id: "TMED433", nombre: "Física Electromag.", sem: 4, cred: 10, req: ["CFIS020", "BIOL272", "BIOL166", "TMED003", "TMED004", "ING129", "CEGCT12"] },
-            { id: "TMED006", nombre: "Proc. TM y Bios.", sem: 5, cred: 6, req: ["FARM171"] },
-            { id: "SPAB110", nombre: "Salud Pública I", sem: 5, cred: 7, req: ["TMED005"] },
-            { id: "ING249", nombre: "Inglés IV", sem: 5, cred: 12, req: ["ING239"] },
-            { id: "TMED531", nombre: "Física Moderna", sem: 5, cred: 7, req: ["TMED431", "TMED433"] },
-            { id: "TMED532", nombre: "Radiodiagnóstico II", sem: 5, cred: 24, req: ["FARM171", "TMED432"] },
-            { id: "TMED533", nombre: "Anat. Imagenológica", sem: 5, cred: 11, req: ["TMED432", "TMED005"] },
-            { id: "SPAB111", nombre: "Salud Pública II", sem: 6, cred: 10, req: ["SPAB110", "TMED006"] },
-            { id: "TMED631", nombre: "Física Nuclear", sem: 6, cred: 13, req: ["TMED531"] },
-            { id: "TMED632", nombre: "Tomog. Computada", sem: 6, cred: 19, req: ["TMED532", "TMED533"] },
-            { id: "TMED633", nombre: "Sist. Informáticos", sem: 6, cred: 13, req: ["TMED532"] },
-            { id: "TMED634", nombre: "Patol. Imagenológica", sem: 6, cred: 12, req: ["TMED532", "TMED533"] },
-            { id: "SPAB112", nombre: "Gestión en Salud", sem: 7, cred: 6, req: ["SPAB111", "TMED633"] },
-            { id: "TMED002", nombre: "Educación en Salud", sem: 7, cred: 4, req: ["SPAB111"] },
-            { id: "TMED731", nombre: "Medicina Nuclear", sem: 7, cred: 17, req: ["TMED631"] },
-            { id: "TMED732", nombre: "Intervencionismo", sem: 7, cred: 12, req: ["TMED634"] },
-            { id: "TMED733", nombre: "Integrador I", sem: 7, cred: 9, req: ["TMED632", "TMED633", "TMED634"] },
-            { id: "TMED734", nombre: "Ultrasonido", sem: 7, cred: 17, req: ["TMED634"] },
-            { id: "SPAB303", nombre: "Metodología Invest.", sem: 8, cred: 5, req: ["SPAB111", "TMED731"] },
-            { id: "SPAB103", nombre: "Aseg. Calidad", sem: 8, cred: 8, req: ["SPAB112", "TMED731"] },
-            { id: "CEGPC13", nombre: "Pensamiento Crítico", sem: 8, cred: 5, req: ["CEGCT12"] },
-            { id: "TMED831", nombre: "Radioterapia", sem: 8, cred: 19, req: ["TMED732", "TMED733"] },
-            { id: "TMED832", nombre: "Resonancia Mag.", sem: 8, cred: 21, req: ["TMED733", "TMED734"] },
-            { id: "CEGRS14", nombre: "Resp. Social", sem: 9, cred: 6, req: ["CEGPC13"] },
-            { id: "TMED931", nombre: "Seminario IFIME", sem: 9, cred: 55, req: ["SPAB303", "SPAB103", "CEGPC13", "TMED831", "TMED832"] },
-            { id: "TMED932", nombre: "Internado IFIME", sem: 10, cred: 72, req: ["SPAB303", "SPAB103", "CEGPC13", "TMED831", "TMED832"] }
+            { id: "MORFO10", nombre: "Anatomía Humana", sem: 1, cred: 12, req: [], lab: 20 },
+            { id: "BIOL130", nombre: "Biología Celular", sem: 1, cred: 8, req: [], lab: 20 },
+            { id: "QUIM102", nombre: "Química General", sem: 1, cred: 16, req: [], lab: 20 },
+            { id: "TMED001", nombre: "Intro. a Tec. Médica", sem: 1, cred: 5, req: [], lab: 20 },
+            { id: "FMMP101", nombre: "Álgebra y Cálculo", sem: 1, cred: 14, req: [], lab: null },
+            { id: "MORF122", nombre: "Histoembriología", sem: 2, cred: 14, req: ["BIOL130", "MORFO10"], lab: 20 },
+            { id: "CFIS020", nombre: "Física General", sem: 2, cred: 12, req: ["FMMP101"], lab: 20 },
+            { id: "QUIM022", nombre: "Química Orgánica", sem: 2, cred: 15, req: ["QUIM102"], lab: 20 },
+            { id: "ING119", nombre: "Inglés I", sem: 2, cred: 12, req: [], lab: null },
+            { id: "CEGHC11", nombre: "Hab. Comunicativas", sem: 2, cred: 8, req: [], lab: null },
+            { id: "BIOL272", nombre: "Fisiología Humana", sem: 3, cred: 11, req: ["MORF122"], lab: 20 },
+            { id: "BIOL166", nombre: "Bioquímica", sem: 3, cred: 8, req: ["QUIM022"], lab: 20 },
+            { id: "TMED003", nombre: "Bioética", sem: 3, cred: 8, req: ["TMED001", "CEGHC11"], lab: null },
+            { id: "TMED004", nombre: "Infectología", sem: 3, cred: 8, req: ["BIOL130"], lab: 20 },
+            { id: "ING129", nombre: "Inglés II", sem: 3, cred: 12, req: ["ING119"], lab: null },
+            { id: "CEGCT12", nombre: "Razon. Científico", sem: 3, cred: 6, req: ["CEGHC11"], lab: null },
+            { id: "TMED005", nombre: "Fisiopatología", sem: 4, cred: 15, req: ["BIOL272"], lab: null },
+            { id: "FARM171", nombre: "Farmacología", sem: 4, cred: 5, req: ["BIOL166"], lab: 20 },
+            { id: "ING239", nombre: "Inglés III", sem: 4, cred: 12, req: ["ING129"], lab: null },
+            { id: "TMED431", nombre: "Prot. Radiológica", sem: 4, cred: 6, req: ["CFIS020", "BIOL272", "BIOL166", "TMED003", "TMED004", "ING129", "CEGCT12"], lab: 20 },
+            { id: "TMED432", nombre: "Radiodiagnóstico I", sem: 4, cred: 20, req: ["CFIS020", "BIOL272", "BIOL166", "TMED003", "TMED004", "ING129", "CEGCT12"], lab: 20 },
+            { id: "TMED433", nombre: "Física Electromag.", sem: 4, cred: 10, req: ["CFIS020", "BIOL272", "BIOL166", "TMED003", "TMED004", "ING129", "CEGCT12"], lab: 20 },
+            { id: "TMED006", nombre: "Proc. TM y Bios.", sem: 5, cred: 6, req: ["FARM171"], lab: null },
+            { id: "SPAB110", nombre: "Salud Pública I", sem: 5, cred: 7, req: ["TMED005"], lab: null },
+            { id: "ING249", nombre: "Inglés IV", sem: 5, cred: 12, req: ["ING239"], lab: null },
+            { id: "TMED531", nombre: "Física Moderna", sem: 5, cred: 7, req: ["TMED431", "TMED433"], lab: 20 },
+            { id: "TMED532", nombre: "Radiodiagnóstico II", sem: 5, cred: 24, req: ["FARM171", "TMED432"], lab: 20 },
+            { id: "TMED533", nombre: "Anat. Imagenológica", sem: 5, cred: 11, req: ["TMED432", "TMED005"], lab: 20 },
+            { id: "SPAB111", nombre: "Salud Pública II", sem: 6, cred: 10, req: ["SPAB110", "TMED006"], lab: null },
+            { id: "TMED631", nombre: "Física Nuclear", sem: 6, cred: 13, req: ["TMED531"], lab: 20 },
+            { id: "TMED632", nombre: "Tomog. Computada", sem: 6, cred: 19, req: ["TMED532", "TMED533"], lab: 20 },
+            { id: "TMED633", nombre: "Sist. Informáticos", sem: 6, cred: 13, req: ["TMED532"], lab: 20 },
+            { id: "TMED634", nombre: "Patol. Imagenológica", sem: 6, cred: 12, req: ["TMED532", "TMED533"], lab: 20 },
+            { id: "SPAB112", nombre: "Gestión en Salud", sem: 7, cred: 6, req: ["SPAB111", "TMED633"], lab: null },
+            { id: "TMED002", nombre: "Educación en Salud", sem: 7, cred: 4, req: ["SPAB111"], lab: null },
+            { id: "TMED731", nombre: "Medicina Nuclear", sem: 7, cred: 17, req: ["TMED631"], lab: 20 },
+            { id: "TMED732", nombre: "Intervencionismo", sem: 7, cred: 12, req: ["TMED634"], lab: 20 },
+            { id: "TMED733", nombre: "Integrador I", sem: 7, cred: 9, req: ["TMED632", "TMED633", "TMED634"], lab: null },
+            { id: "TMED734", nombre: "Ultrasonido", sem: 7, cred: 17, req: ["TMED634"], lab: 20 },
+            { id: "SPAB303", nombre: "Metodología Invest.", sem: 8, cred: 5, req: ["SPAB111", "TMED731"], lab: null },
+            { id: "SPAB103", nombre: "Aseg. Calidad", sem: 8, cred: 8, req: ["SPAB112", "TMED731"], lab: null },
+            { id: "CEGPC13", nombre: "Pensamiento Crítico", sem: 8, cred: 5, req: ["CEGCT12"], lab: null },
+            { id: "TMED831", nombre: "Radioterapia", sem: 8, cred: 19, req: ["TMED732", "TMED733"], lab: 20 },
+            { id: "TMED832", nombre: "Resonancia Mag.", sem: 8, cred: 21, req: ["TMED733", "TMED734"], lab: 20 },
+            { id: "CEGRS14", nombre: "Resp. Social", sem: 9, cred: 6, req: ["CEGPC13"], lab: null },
+            { id: "TMED931", nombre: "Seminario IFIME", sem: 9, cred: 55, req: ["SPAB303", "SPAB103", "CEGPC13", "TMED831", "TMED832"], lab: null },
+            { id: "TMED932", nombre: "Internado IFIME", sem: 10, cred: 72, req: ["SPAB303", "SPAB103", "CEGPC13", "TMED831", "TMED832"], lab: null }
         ];
 
         let aprobadas = JSON.parse(localStorage.getItem('MALLA_UNAB_V3')) || [];
         let currentRamoId = null;
 
-        function toggleMenu() { document.getElementById("dropdownMenu").classList.toggle("active"); }
+        function toggleMenu() {
+            const m = document.getElementById("dropdownMenu");
+            m.classList.toggle("active");
+        }
+
+        function toggleDarkMode() {
+            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+            if (isDark) {
+                document.documentElement.removeAttribute('data-theme');
+                localStorage.removeItem('theme');
+                document.getElementById('darkModeIcon').className = 'fas fa-moon';
+                document.getElementById('darkModeLabel').innerText = 'Modo Oscuro';
+            } else {
+                document.documentElement.setAttribute('data-theme', 'dark');
+                localStorage.setItem('theme', 'dark');
+                document.getElementById('darkModeIcon').className = 'fas fa-sun';
+                document.getElementById('darkModeLabel').innerText = 'Modo Claro';
+            }
+            toggleMenu();
+        }
+
+        (function initTheme() {
+            if (localStorage.getItem('theme') === 'dark') {
+                document.documentElement.setAttribute('data-theme', 'dark');
+                document.getElementById('darkModeIcon').className = 'fas fa-sun';
+                document.getElementById('darkModeLabel').innerText = 'Modo Claro';
+            }
+        })();
+
+        function updateStats() {
+            let tCredPassed = 0, sumPG = 0, cNG = 0;
+            materias.forEach(m => {
+                if (aprobadas.includes(m.id)) tCredPassed += m.cred;
+                const g = localStorage.getItem('grade_' + m.id);
+                if (g && g !== "1.00") { sumPG += (parseFloat(g) * m.cred); cNG += m.cred; }
+            });
+            const pct = Math.round((aprobadas.length / materias.length) * 100);
+            const pga = cNG > 0 ? (sumPG / cNG) : 0;
+            animateCounter(document.getElementById('gTotal'), parseFloat(pga.toFixed(2)), '', 700);
+            animateCounter(document.getElementById('cTotal'), tCredPassed, '', 700);
+            animateCounter(document.getElementById('pPct'), pct, '%', 700);
+            document.getElementById('topProgressBar').style.width = pct + '%';
+        }
 
         function toggleAprobado(id) {
             const index = aprobadas.indexOf(id);
             if (index > -1) aprobadas.splice(index, 1);
             else aprobadas.push(id);
             localStorage.setItem('MALLA_UNAB_V3', JSON.stringify(aprobadas));
-            render();
+
+            // Actualizar clases y onclick de todas las cards
+            materias.forEach(m => {
+                const el = document.getElementById(`ramo-${m.id}`);
+                if (!el) return;
+                const isPassed = aprobadas.includes(m.id);
+                const canTake = m.req.every(r => aprobadas.includes(r));
+                el.className = `ramo ${isPassed ? 'passed' : (canTake ? 'unlocked' : 'locked')}`;
+                const cardEl = el.querySelector('.ramo-card');
+                if (cardEl) {
+                    cardEl.onclick = (canTake || isPassed) ? () => toggleAprobado(m.id) : null;
+                }
+            });
+
+            // Actualizar estados de semestre completados
+            for (let i = 1; i <= 10; i++) {
+                const semMaterias = materias.filter(m => m.sem === i);
+                const todosAprobados = semMaterias.length > 0 && semMaterias.every(m => aprobadas.includes(m.id));
+                const semBox = document.querySelector(`.malla > :nth-child(${i})`);
+                if (semBox) semBox.className = `semestre ${todosAprobados ? 'completed' : ''}`;
+            }
+
+            updateStats();
+            if (index === -1) showToast('Ramo aprobado', 'success');
         }
 
-        // LÓGICA DE SUBRAYADOS MEJORADA
         function highlightRelations(id) {
             const m = materias.find(x => x.id === id);
             if(!m) return;
@@ -306,7 +761,7 @@
             document.querySelectorAll('.ramo').forEach(r => r.classList.remove('is-req', 'is-target'));
         }
 
-        function openNav(id) { 
+        function openNav(id) {
             currentRamoId = id;
             const sideNav = document.getElementById("sideNav");
             sideNav.style.width = window.innerWidth < 600 ? "100%" : "380px";
@@ -316,7 +771,11 @@
                 document.getElementById("activeRamoName").innerText = m.nombre;
                 document.getElementById("calculadoraContainer").style.display = "block";
                 document.getElementById("resumenContainer").style.display = "none";
-                loadCalculator(id);
+                const hasLab = m.lab !== null && m.lab !== undefined && m.lab > 0;
+                document.getElementById("calculadoraContainer").dataset.hasLab = hasLab ? "1" : "0";
+                document.getElementById("labSection").style.display = hasLab ? "block" : "none";
+                document.getElementById("theoryWeightRow").style.display = hasLab ? "flex" : "none";
+                loadCalculator(id, hasLab ? m.lab : 0);
             } else {
                 document.getElementById("activeRamoName").innerText = "Resumen de Carrera";
                 document.getElementById("calculadoraContainer").style.display = "none";
@@ -325,158 +784,294 @@
             }
         }
 
-        function closeNav() { document.getElementById("sideNav").style.width = "0"; document.getElementById("overlay").style.display = "none"; }
+        function closeNav() {
+            document.getElementById("sideNav").style.width = "0";
+            document.getElementById("overlay").style.display = "none";
+        }
 
-        function loadCalculator(id) {
-            const container = document.getElementById("notasInputs");
-            const labContainer = document.getElementById("labNotasInputs");
-            container.innerHTML = "";
-            labContainer.innerHTML = "";
-            
-            let savedData = JSON.parse(localStorage.getItem('calc_' + id)) || [{n: "", p: ""}];
-            let savedLabData = JSON.parse(localStorage.getItem('calc_lab_' + id)) || [];
-            let labPercentage = localStorage.getItem('lab_percent_' + id) || "0";
-            
-            savedData.forEach(row => addRow(row.n, row.p));
-            savedLabData.forEach(row => addLabRow(row.n, row.p));
-            document.getElementById("labPercentageInput").value = labPercentage;
-            updateLabConfigHelper(labPercentage);
+        function updateWeightBar(lw) {
+            const tw = 100 - lw;
+            document.getElementById("barTheory").style.width = tw + "%";
+            document.getElementById("barLab").style.width = lw + "%";
+            document.getElementById("theoryLocked").innerText = "Teo: " + tw + "%";
+        }
+
+        function toggleExam() {
+            const on = document.getElementById("examToggle").checked;
+            document.getElementById("examInput").style.display = on ? "block" : "none";
+            document.getElementById("examSection").style.display = "block";
+            saveWeights();
             calculateWeighted();
         }
 
-        function addRow(nota = "", peso = "") {
-            const div = document.createElement("div");
-            div.className = "calc-row";
-            div.innerHTML = `<input type="number" step="0.1" class="calc-input nota" placeholder="Nota" value="${nota}" oninput="calculateWeighted()"><input type="number" step="1" class="calc-input peso" placeholder="%" value="${peso}" oninput="calculateWeighted()"><button class="btn-remove" onclick="this.parentElement.remove(); calculateWeighted()"><i class="fas fa-trash"></i></button>`;
-            document.getElementById("notasInputs").appendChild(div);
+        function loadCalculator(id, defaultLabWeight = 0) {
+            document.getElementById("theoryInputs").innerHTML = "";
+            document.getElementById("labInputs").innerHTML = "";
+            document.getElementById("examSection").style.display = "block";
+            let saved = JSON.parse(localStorage.getItem('calc_' + id));
+            // Migrar formato antiguo si existe
+            if (Array.isArray(saved)) {
+                saved = { tw: 80, lw: 20, tg: saved, lg: [{n: "", p: ""}] };
+            }
+            const hasLab = defaultLabWeight > 0;
+            const defaultLw = hasLab ? defaultLabWeight : 0;
+            saved = saved || { lw: defaultLw, tg: [{n: "", p: ""}], lg: [{n: "", p: ""}] };
+            const lw = saved.lw != null ? saved.lw : defaultLw;
+            document.getElementById("labWeightInput").value = lw;
+            updateWeightBar(lw);
+            (saved.tg || [{n: "", p: ""}]).forEach(r => addRow('theory', r.n, r.p));
+            if (hasLab) {
+                (saved.lg || [{n: "", p: ""}]).forEach(r => addRow('lab', r.n, r.p));
+            }
+            // Cargar examen
+            const hasExam = saved.exam === true;
+            document.getElementById("examToggle").checked = hasExam;
+            document.getElementById("examInput").style.display = hasExam ? "block" : "none";
+            const examGradeEl = document.querySelector('.exam-grade');
+            if (examGradeEl) examGradeEl.value = saved.examGrade || "";
+            calculateWeighted();
         }
 
-        function addLabRow(nota = "", peso = "") {
+        function addRow(section, nota = "", peso = "") {
+            const container = document.getElementById(section === 'theory' ? 'theoryInputs' : 'labInputs');
             const div = document.createElement("div");
             div.className = "calc-row";
-            div.innerHTML = `<input type="number" step="0.1" class="calc-input nota-lab" placeholder="Nota" value="${nota}" oninput="calculateWeighted()"><input type="number" step="1" class="calc-input peso-lab" placeholder="%" value="${peso}" oninput="calculateWeighted()"><button class="btn-remove" onclick="this.parentElement.remove(); calculateWeighted()"><i class="fas fa-trash"></i></button>`;
-            document.getElementById("labNotasInputs").appendChild(div);
+            div.innerHTML = `<input type="number" step="0.1" class="calc-input nota" placeholder="Nota" value="${nota}" oninput="calculateWeighted()"><input type="number" step="1" class="calc-input peso" placeholder="%" value="${peso}" oninput="calculateWeighted()"><button class="btn-remove" onclick="this.parentElement.remove(); calculateWeighted()"><i class="fas fa-trash-alt"></i></button>`;
+            container.appendChild(div);
+        }
+
+        function calcSectionAvg(containerId) {
+            const container = document.getElementById(containerId);
+            const notas = container.querySelectorAll(".nota");
+            const pesos = container.querySelectorAll(".peso");
+            let sum = 0, wSum = 0;
+            notas.forEach((v, i) => {
+                const n = parseFloat(v.value), p = parseFloat(pesos[i].value);
+                if (!isNaN(n) && !isNaN(p)) { sum += n * (p / 100); wSum += p; }
+            });
+            return { avg: wSum > 0 ? sum : null, wSum };
         }
 
         function calculateWeighted() {
-            // Obtener datos del ramo
-            const notasRamo = document.querySelectorAll(".nota");
-            const pesosRamo = document.querySelectorAll(".peso");
-            const notasLab = document.querySelectorAll(".nota-lab");
-            const pesosLab = document.querySelectorAll(".peso-lab");
-            const labPercentage = parseFloat(document.getElementById("labPercentageInput").value) || 0;
-            const ramoPercentage = 100 - labPercentage;
-            
-            // Calcular promedio del ramo
-            let totalRamo = 0, weightSumRamo = 0, countRamo = 0;
-            notasRamo.forEach((val, i) => {
-                const v = parseFloat(val.value);
-                const pe = parseFloat(pesosRamo[i].value);
-                if(!isNaN(v) && !isNaN(pe)) {
-                    totalRamo += (v * (pe / 100));
-                    weightSumRamo += pe;
-                    countRamo++;
+            const hasLab = document.getElementById("calculadoraContainer").dataset.hasLab === "1";
+            let lw;
+            if (hasLab) {
+                lw = parseFloat(document.getElementById("labWeightInput").value) || 0;
+            } else {
+                lw = 0;
+            }
+            const tw = 100 - lw;
+            updateWeightBar(lw);
+            const tRes = calcSectionAvg("theoryInputs");
+            const lRes = calcSectionAvg("labInputs");
+
+            // Promedios de cada sección
+            const tAvg = tRes.avg !== null ? tRes.avg.toFixed(1) : "--";
+            const lAvg = lRes.avg !== null ? lRes.avg.toFixed(1) : "--";
+            document.getElementById("theoryAvg").innerText = tRes.avg !== null ? `Promedio: ${tAvg}` : "";
+            document.getElementById("labAvg").innerText = lRes.avg !== null ? `Promedio: ${lAvg}` : "";
+
+            // Nota de presentación (teoría + lab)
+            let presAvg = null;
+            const tContrib = tRes.avg !== null ? tRes.avg * (tw / 100) : 0;
+            const lContrib = lRes.avg !== null ? lRes.avg * (lw / 100) : 0;
+            if (tRes.avg !== null || lRes.avg !== null) {
+                presAvg = tContrib + lContrib;
+            }
+
+            // Examen
+            const hasExam = document.getElementById("examToggle").checked;
+            const examGradeEl = document.querySelector('.exam-grade');
+            const examGrade = examGradeEl ? parseFloat(examGradeEl.value) : null;
+
+            // Nota final: con examen = 70% presentación + 30% examen
+            let final = "";
+            if (hasExam) {
+                if (presAvg !== null && examGrade !== null && !isNaN(examGrade)) {
+                    final = (presAvg * 0.70 + examGrade * 0.30).toFixed(2);
+                } else if (presAvg !== null) {
+                    final = (presAvg * 0.70).toFixed(2);
                 }
-            });
-            const promRamo = (countRamo > 0 && weightSumRamo > 0) ? totalRamo : "";
-            document.getElementById("ramoCalcGrade").innerText = promRamo !== "" ? parseFloat(promRamo).toFixed(2) : "-";
-            
-            // Calcular promedio del lab
-            let totalLab = 0, weightSumLab = 0, countLab = 0;
-            notasLab.forEach((val, i) => {
-                const v = parseFloat(val.value);
-                const pe = parseFloat(pesosLab[i].value);
-                if(!isNaN(v) && !isNaN(pe)) {
-                    totalLab += (v * (pe / 100));
-                    weightSumLab += pe;
-                    countLab++;
+            } else {
+                if (presAvg !== null) {
+                    final = presAvg.toFixed(2);
                 }
-            });
-            const promLab = (countLab > 0 && weightSumLab > 0) ? totalLab : "";
-            document.getElementById("labCalcGrade").innerText = promLab !== "" ? parseFloat(promLab).toFixed(2) : "-";
-            
-            // Calcular nota final considerando porcentajes
-            let finalGrade = "";
-            if (promRamo !== "" && labPercentage > 0) {
-                if (promLab !== "") {
-                    finalGrade = ((promRamo * (ramoPercentage / 100)) + (promLab * (labPercentage / 100))).toFixed(2);
+            }
+            document.getElementById("finalCalcGrade").innerText = final;
+
+            // Alerta de pesos
+            const alert = document.getElementById("weightAlert");
+            const totalWeight = tw + lw;
+            if (totalWeight !== 100 && lw > 0) {
+                alert.innerText = `Pesos: Teoría ${tw}% + Lab ${lw}% = ${totalWeight}% (debe ser 100%)`;
+            } else {
+                alert.innerText = "";
+            }
+
+            const box = document.getElementById("resultBox");
+            const displayForColor = hasExam && final !== "" ? Math.round(parseFloat(final) * 10) / 10 : final;
+            if (final !== "" && parseFloat(displayForColor) >= 4.0) box.classList.add('has-grade');
+            else box.classList.remove('has-grade');
+
+            // Calcular nota necesaria (sin examen)
+            const need = document.getElementById("needGrade");
+            const examNeed = document.getElementById("examNeed");
+            examNeed.innerText = "";
+
+            if (!hasExam) {
+                // Lógica original sin examen
+                if (final === "" || totalWeight !== 100) {
+                    need.innerText = "";
                 } else {
-                    finalGrade = "Falta promedio de Lab";
+                    const finalNum = parseFloat(final);
+                    const tDone = tRes.wSum >= 100;
+                    const lDone = lw === 0 || lRes.wSum >= 100;
+                    const tRemainingPct = tDone ? 0 : (100 - tRes.wSum);
+                    const lRemainingPct = (lw > 0 && !lDone) ? (100 - lRes.wSum) : 0;
+                    const totalRemainingPct = tRemainingPct + lRemainingPct;
+
+                    if (finalNum >= 4.0 && tDone && (lw === 0 || lDone)) {
+                        need.innerText = "Aprobado";
+                    } else if (totalRemainingPct <= 0) {
+                        need.innerText = finalNum >= 4.0 ? "Aprobado" : "Reprobado";
+                    } else {
+                        const currentContrib = (tRes.avg || 0) * (tw / 100) + (lRes.avg || 0) * (lw / 100);
+                        const neededContrib = 4.0 - currentContrib;
+                        if (neededContrib <= 0) {
+                            need.innerText = "Ya estás aprobado";
+                        } else {
+                            const neededPerPct = neededContrib / (totalRemainingPct / 100);
+                            if (neededPerPct >= 7.0) {
+                                need.innerText = "Ya no puedes aprobar";
+                            } else {
+                                const msgs = [];
+                                if (tRemainingPct > 0) {
+                                    const tNeed = neededContrib / (tRemainingPct * tw / 100 / 100);
+                                    msgs.push(`${Math.min(Math.max(tNeed, 1.0), 7.0).toFixed(1)} en Teoría (${Math.round(tRemainingPct)}%)`);
+                                }
+                                if (lRemainingPct > 0) {
+                                    const lNeed = neededContrib / (lRemainingPct * lw / 100 / 100);
+                                    msgs.push(`${Math.min(Math.max(lNeed, 1.0), 7.0).toFixed(1)} en Lab (${Math.round(lRemainingPct)}%)`);
+                                }
+                                need.innerText = msgs.length ? `Necesitas: ${msgs.join(' y ')}` : "";
+                            }
+                        }
+                    }
                 }
-            } else if (promRamo !== "" && labPercentage === 0) {
-                finalGrade = parseFloat(promRamo).toFixed(2);
+            } else {
+                // Lógica con examen: necesito nota en examen para llegar a 4.0
+                // Redondeo estándar: x.x5 redondea hacia arriba (3.95 → 4.0)
+                need.innerText = "";
+                if (presAvg !== null) {
+                    const rawThreshold = presAvg * 0.70;
+                    const neededExam = (3.95 - rawThreshold) / 0.30;
+                    // Redondeo a 1 decimal
+                    const displayNeed = Math.ceil(neededExam * 10) / 10;
+                    if (examGrade !== null && !isNaN(examGrade)) {
+                        const rawFinal = presAvg * 0.70 + examGrade * 0.30;
+                        const roundedFinal = Math.round(rawFinal * 10) / 10;
+                        if (roundedFinal >= 4.0) {
+                            examNeed.innerText = "Aprobado";
+                        } else if (examGrade >= 7.0) {
+                            examNeed.innerText = "Reprobado";
+                        } else {
+                            examNeed.innerText = displayNeed > 7.0
+                                ? `Necesitas ${displayNeed.toFixed(1)} (imposible)`
+                                : `Necesitas ${displayNeed.toFixed(1)} en el examen`;
+                        }
+                    } else {
+                        if (neededExam <= 1.0) {
+                            examNeed.innerText = "Ya estás aprobado con la presentación";
+                        } else if (displayNeed > 7.0) {
+                            examNeed.innerText = "Ya no puedes aprobar con el examen";
+                        } else {
+                            examNeed.innerText = `Necesitas ${displayNeed.toFixed(1)} en el examen`;
+                        }
+                    }
+                } else {
+                    examNeed.innerText = "Ingresar notas de presentación";
+                }
             }
-            
-            document.getElementById("finalCalcGrade").innerText = finalGrade;
-            
-            // Validar pesos
-            let alertMsg = "";
-            if (weightSumRamo > 0 && weightSumRamo !== 100) {
-                alertMsg += `Ramo: ${weightSumRamo < 100 ? `Falta ${100 - weightSumRamo}%` : `Exceso: ${weightSumRamo - 100}%`}`;
-            }
-            if (weightSumLab > 0 && weightSumLab !== 100) {
-                if (alertMsg) alertMsg += " | ";
-                alertMsg += `Lab: ${weightSumLab < 100 ? `Falta ${100 - weightSumLab}%` : `Exceso: ${weightSumLab - 100}%`}`;
-            }
-            document.getElementById("weightAlert").innerText = alertMsg || "✓ Pesos OK";
-            document.getElementById("weightAlert").style.color = alertMsg ? "var(--unab-red)" : "var(--state-passed)";
-            
-            return { grade: finalGrade, sumRamo: weightSumRamo, sumLab: weightSumLab };
+
+            return { grade: final };
         }
-        
-        function onLabPercentageChange() {
-            updateLabConfigHelper(document.getElementById("labPercentageInput").value);
-            calculateWeighted();
-        }
-        
-        function updateLabConfigHelper(percentage) {
-            const per = parseFloat(percentage) || 0;
-            const ramo = 100 - per;
-            const helper = document.getElementById("labConfigHelper");
-            helper.innerText = per > 0 ? 
-                `Ramo: ${ramo}% | Lab: ${per}%` : 
-                "Las notas del ramo ocuparán el 100%";
+
+        function saveWeights() {
+            const hasLab = document.getElementById("calculadoraContainer").dataset.hasLab === "1";
+            const lw = hasLab ? (parseFloat(document.getElementById("labWeightInput").value) || 0) : 0;
+            let saved = JSON.parse(localStorage.getItem('calc_' + currentRamoId)) || { tg: [{n:"",p:""}], lg: [{n:"",p:""}] };
+            saved.lw = lw;
+            const hasExam = document.getElementById("examToggle").checked;
+            saved.exam = hasExam;
+            const examGradeEl = document.querySelector('.exam-grade');
+            saved.examGrade = examGradeEl ? examGradeEl.value : "";
+            localStorage.setItem('calc_' + currentRamoId, JSON.stringify(saved));
         }
 
         function saveGrade() {
             const res = calculateWeighted();
-            
-            // Guardar datos del ramo
-            const rowsRamo = document.querySelectorAll("#notasInputs .calc-row");
-            let dataRamoToSave = [];
-            rowsRamo.forEach(row => { 
-                dataRamoToSave.push({ n: row.querySelector(".nota").value, p: row.querySelector(".peso").value }); 
-            });
-            localStorage.setItem('calc_' + currentRamoId, JSON.stringify(dataRamoToSave));
-            
-            // Guardar datos del lab
-            const rowsLab = document.querySelectorAll("#labNotasInputs .calc-row");
-            let dataLabToSave = [];
-            rowsLab.forEach(row => { 
-                dataLabToSave.push({ n: row.querySelector(".nota-lab").value, p: row.querySelector(".peso-lab").value }); 
-            });
-            localStorage.setItem('calc_lab_' + currentRamoId, JSON.stringify(dataLabToSave));
-            
-            // Guardar porcentaje de lab
-            const labPercent = document.getElementById("labPercentageInput").value;
-            localStorage.setItem('lab_percent_' + currentRamoId, labPercent);
-            
-            // Guardar nota final
-            if(res.grade !== "" && res.grade !== "Falta promedio de Lab") {
+            const hasLab = document.getElementById("calculadoraContainer").dataset.hasLab === "1";
+            const lw = hasLab ? (parseFloat(document.getElementById("labWeightInput").value) || 0) : 0;
+            const tw = 100 - lw;
+            const tRows = document.querySelectorAll("#theoryInputs .calc-row");
+            const lRows = document.querySelectorAll("#labInputs .calc-row");
+            const tg = [], lg = [];
+            tRows.forEach(r => tg.push({ n: r.querySelector(".nota").value, p: r.querySelector(".peso").value }));
+            lRows.forEach(r => lg.push({ n: r.querySelector(".nota").value, p: r.querySelector(".peso").value }));
+            const hasExam = document.getElementById("examToggle").checked;
+            const examGradeEl = document.querySelector('.exam-grade');
+            const examGrade = examGradeEl ? examGradeEl.value : "";
+            localStorage.setItem('calc_' + currentRamoId, JSON.stringify({ tw, lw, tg, lg, exam: hasExam, examGrade }));
+            if(res.grade !== "") {
                 localStorage.setItem('grade_' + currentRamoId, res.grade);
                 if(parseFloat(res.grade) >= 4.0 && !aprobadas.includes(currentRamoId)) {
                     aprobadas.push(currentRamoId);
                     localStorage.setItem('MALLA_UNAB_V3', JSON.stringify(aprobadas));
+                    showToast('¡Ramo aprobado!', 'success');
+                } else {
+                    showToast('Notas guardadas', 'success');
                 }
-            } else { 
-                localStorage.removeItem('grade_' + currentRamoId); 
+            } else { localStorage.removeItem('grade_' + currentRamoId); showToast('Nota inválida', 'error'); }
+
+            // Actualizar todas las cards (bloqueo/disponible/pasó, nota y onclick)
+            materias.forEach(m => {
+                const el = document.getElementById(`ramo-${m.id}`);
+                if (!el) return;
+                const isPassed = aprobadas.includes(m.id);
+                const canTake = m.req.every(r => aprobadas.includes(r));
+                el.className = `ramo ${isPassed ? 'passed' : (canTake ? 'unlocked' : 'locked')}`;
+                const cardEl = el.querySelector('.ramo-card');
+                if (cardEl) {
+                    cardEl.onclick = (canTake || isPassed) ? () => toggleAprobado(m.id) : null;
+                }
+                const grade = localStorage.getItem('grade_' + m.id);
+                let tag = el.querySelector('.ramo-grade-tag');
+                if (grade) {
+                    if (!tag) {
+                        tag = document.createElement('div');
+                        tag.className = 'ramo-grade-tag';
+                        cardEl.appendChild(tag);
+                    }
+                    tag.style.color = parseFloat(grade) >= 4 ? 'var(--note-blue)' : 'var(--unab-red)';
+                    tag.innerText = grade;
+                } else if (tag) { tag.remove(); }
+            });
+
+            // Actualizar semestres completados
+            for (let i = 1; i <= 10; i++) {
+                const semMaterias = materias.filter(x => x.sem === i);
+                const todosAprobados = semMaterias.length > 0 && semMaterias.every(x => aprobadas.includes(x.id));
+                const semBox = document.querySelector(`.malla > :nth-child(${i})`);
+                if (semBox) semBox.className = `semestre ${todosAprobados ? 'completed' : ''}`;
             }
-            render(); closeNav();
+
+            updateStats();
+            closeNav();
         }
 
         function updateSummary() {
             const container = document.getElementById("resumenContainer");
-            container.innerHTML = "<h4>Rendimiento por Semestre</h4>";
+            container.innerHTML = "<h4 style='color:var(--unab-blue); margin-bottom:16px; font-weight:600'><i class='fas fa-chart-bar' style='margin-right:6px'></i>Rendimiento por Semestre</h4>";
             for (let s = 1; s <= 10; s++) {
                 let sum = 0, credsGrade = 0;
                 materias.filter(m => m.sem === s).forEach(m => {
@@ -488,41 +1083,81 @@
             }
         }
 
+        let _firstRender = true;
+
         function render() {
             const grid = document.getElementById('mallaGrid');
             grid.innerHTML = '';
-            let tCredPassed = 0, sumPG = 0, cNG = 0;
             for (let i = 1; i <= 10; i++) {
                 const semMaterias = materias.filter(m => m.sem === i);
                 const todosAprobados = semMaterias.length > 0 && semMaterias.every(m => aprobadas.includes(m.id));
                 const semBox = document.createElement('div');
                 semBox.className = `semestre ${todosAprobados ? 'completed' : ''}`;
+                if (_firstRender) semBox.style.animationDelay = (i * 0.05) + 's';
                 semBox.innerHTML = `<div class="sem-header">Semestre ${i}</div>`;
                 semMaterias.forEach(m => {
                     const isPassed = aprobadas.includes(m.id);
                     const canTake = m.req.every(r => aprobadas.includes(r));
                     const grade = localStorage.getItem('grade_' + m.id);
-                    if(isPassed) tCredPassed += m.cred;
-                    if(grade && grade != "1.00") { sumPG += (parseFloat(grade) * m.cred); cNG += m.cred; }
                     const div = document.createElement('div');
                     div.className = `ramo ${isPassed ? 'passed' : (canTake ? 'unlocked' : 'locked')}`;
                     div.id = `ramo-${m.id}`;
                     div.onmouseenter = () => highlightRelations(m.id);
                     div.onmouseleave = () => clearHighlights();
-                    div.innerHTML = `<div class="ramo-card" onclick="${canTake || isPassed ? `toggleAprobado('${m.id}')` : ''}"><span class="ramo-name">${m.nombre}</span><span class="ramo-info">${m.id} • ${m.cred} CR</span>${grade ? `<div class="ramo-grade-tag" style="color: ${parseFloat(grade) >= 4 ? 'var(--note-blue)' : 'var(--unab-red)'}">${grade}</div>` : ''}</div><div class="btn-edit-nota" onclick="event.stopPropagation(); openNav('${m.id}')"><i class="fas fa-calculator"></i></div>`;
+                    div.innerHTML = `<div class="ramo-card" onclick="${canTake || isPassed ? `toggleAprobado('${m.id}')` : ''}"><span class="ramo-name">${m.nombre}</span><span class="ramo-info">${m.id} &bull; ${m.cred} CR</span>${grade ? `<div class="ramo-grade-tag" style="color:${parseFloat(grade) >= 4 ? 'var(--note-blue)' : 'var(--unab-red)'}">${grade}</div>` : ''}</div><div class="btn-edit-nota" onclick="event.stopPropagation(); openNav('${m.id}')"><i class="fas fa-sliders-h"></i></div>`;
                     semBox.appendChild(div);
                 });
                 grid.appendChild(semBox);
             }
-            const pct = Math.round((aprobadas.length / materias.length) * 100);
-            document.getElementById('gTotal').innerText = cNG > 0 ? (sumPG / cNG).toFixed(2) : "0.00";
-            document.getElementById('cTotal').innerText = tCredPassed;
-            document.getElementById('pPct').innerText = pct + '%';
-            document.getElementById('topProgressBar').style.width = pct + '%';
+
+            updateStats();
+            _firstRender = false;
         }
 
-        function resetAll() { if(confirm("¿Borrar todo?")) { localStorage.clear(); location.reload(); } }
+        function resetAll() {
+            if(confirm("¿Borrar todo el progreso?")) {
+                localStorage.clear();
+                showToast('Progreso eliminado', 'error');
+                setTimeout(() => location.reload(), 400);
+            }
+        }
+
+        // =============================================
+        // INSTALACIÓN
+        // =============================================
+        let deferredPrompt;
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            document.getElementById('installContainer').style.display = 'block';
+        });
+
+        document.getElementById('btnInstall').addEventListener('click', async () => {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                const { outcome } = await deferredPrompt.userChoice;
+                if (outcome === 'accepted') {
+                    document.getElementById('installContainer').style.display = 'none';
+                    showToast('App instalada', 'success');
+                }
+                deferredPrompt = null;
+            }
+        });
+
+        // =============================================
+        // SPLASH SCREEN
+        // =============================================
+        function dismissSplash() {
+            const splash = document.getElementById('splash');
+            const app = document.getElementById('app');
+            if (!splash) return;
+            splash.classList.add('slide-down');
+            app.classList.add('visible');
+            setTimeout(() => splash.remove(), 800);
+        }
+
         render();
     </script>
+    </div>
 </body>
 </html>
