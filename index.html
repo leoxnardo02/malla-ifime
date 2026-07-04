@@ -1137,8 +1137,11 @@
         let deferredPrompt;
         const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
         const isAndroid = /Android/.test(navigator.userAgent);
+        const isStandalone = window.matchMedia('(display-mode: standalone)').matches || navigator.standalone === true;
 
-        document.getElementById('installContainer').style.display = 'block';
+        if (!isStandalone) {
+            document.getElementById('installContainer').style.display = 'block';
+        }
 
         window.addEventListener('beforeinstallprompt', (e) => {
             e.preventDefault();
