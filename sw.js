@@ -1,7 +1,8 @@
-const CACHE_NAME = 'malla-ifime-v2';
+const CACHE_NAME = 'malla-ifime-v3';
 const assets = [
   './index.html',
   './logo-unab.png',
+  './manifest.json',
   'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css'
 ];
 
